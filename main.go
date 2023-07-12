@@ -10,6 +10,7 @@ import (
 const (
 	StatusToDo            = "to do"
 	StatusInDefinitionPM  = "in definition pm"
+	StatusInDesign        = "in design"
 	StatusInDefinitionDev = "in definition dev"
 	StatusToDevelop       = "to develop"
 	StatusInDevelopment   = "in development"
@@ -60,7 +61,7 @@ type TasksMetrics struct {
 }
 
 func getTaskInfo(taskId string) TaskInfo {
-	inputData := `
+	historyData := `
 	{
 		"history": [
 			{
@@ -111,7 +112,7 @@ func getTaskInfo(taskId string) TaskInfo {
 		]
 	}`
 
-	history := parserJSON([]byte(inputData))
+	history := parserJSON([]byte(historyData))
 	return TaskInfo{
 		TaskId:    taskId,
 		StartDate: "1685749061000",
@@ -132,6 +133,7 @@ func initMetrics() MetricsPerState {
 	return MetricsPerState{
 		StatusToDo:            {},
 		StatusInDefinitionPM:  {},
+		StatusInDesign:        {},
 		StatusInDefinitionDev: {},
 		StatusToDevelop:       {},
 		StatusInDevelopment:   {},
@@ -159,9 +161,7 @@ func calculateTimePerState(taskInfo *TaskInfo) *MetricsPerState {
 		metrics[statusBefore] = metricForBeforeStatus
 
 		metricForBeforeStatus.TimeSpent += calcTimeSpent(metricForBeforeStatus)
-		fmt.Print("Estado: ", statusBefore, " Start Date: ", metricForBeforeStatus.StartDate, "Due Date: ", metricForBeforeStatus.DueDate)
 		cleanDates(metricForBeforeStatus)
-		fmt.Println("Time Spent: ", metricForBeforeStatus.TimeSpent)
 	}
 
 	return &metrics
@@ -231,7 +231,7 @@ func isValidStateForCycleTime(status Status) bool {
 }
 
 func isStateWaitingOrBlocked(status Status) bool {
-	return status == StatusBlocked
+	return (status == StatusBlocked) || (status == StatusToDevelop)
 }
 
 func main() {
