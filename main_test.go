@@ -56,9 +56,11 @@ func TestCalculateMetricsCase1(t *testing.T) {
 
 	history := parserJSON([]byte(historyData))
 	taskInfo := TaskInfo{
-		TaskId:    "85zt8cyjd",
-		StartDate: "1685749061000",
-		History:   history,
+		TaskHeaderData: TaskHeaderData{
+			Id:        "85zt8cyjd",
+			StartDate: "1685749061000",
+		},
+		History: history,
 	}
 
 	metricsPerState := calculateTimePerState(&taskInfo)
@@ -216,9 +218,11 @@ func TestCalculateMetricsCase2(t *testing.T) {
 
 	history := parserJSON([]byte(historyData))
 	taskInfo := TaskInfo{
-		TaskId:    "85zrzu15w",
-		StartDate: "1683874800000",
-		History:   history,
+		TaskHeaderData: TaskHeaderData{
+			Id:        "85zrzu15w",
+			StartDate: "1683874800000",
+		},
+		History: history,
 	}
 
 	metricsPerState := calculateTimePerState(&taskInfo)
