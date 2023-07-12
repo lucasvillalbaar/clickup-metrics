@@ -1,3 +1,26 @@
+/*
+Package configuration provides functionality for loading and accessing environment variables.
+
+This package is responsible for loading environment variables from a .env file and making them accessible
+to other parts of the application. It provides a way to retrieve the loaded environment variables and
+terminate the program if any required variables are missing.
+
+Usage:
+ 1. Call LoadEnvironmentVariables to load the environment variables from the .env file.
+ 2. Use GetEnvironmentVariables to retrieve the loaded variables.
+ 3. Access individual variables as needed.
+
+Example:
+
+	err := configuration.LoadEnvironmentVariables()
+	if err != nil {
+		log.Fatal("Error loading .env file:", err)
+	}
+
+	envVars := configuration.GetEnvironmentVariables()
+	fmt.Println("Token:", envVars.Token)
+	fmt.Println("API Key:", envVars.ApiKey)
+*/
 package configuration
 
 import (
