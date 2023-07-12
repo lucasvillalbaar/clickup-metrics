@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
-	configuration "github.com/lucasvillalbaar/clickup-metrics/pkg"
+	"github.com/lucasvillalbaar/clickup-metrics/pkg/configuration"
 )
 
 // Constants for task statuses
