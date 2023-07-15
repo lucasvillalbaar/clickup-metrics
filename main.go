@@ -40,23 +40,12 @@ func setStatusesForCycleTimeCalculation(wfStatuses *map[string]metrics.Status, v
 	}
 }
 
-func main() {
-	err := configuration.LoadEnvironmentVariables()
-	if err != nil {
-		log.Fatal("Error loading .env file:", err)
-	}
-	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey, configuration.GetEnvironmentVariables().Token)
-
-	data.SetDataSource(cli)
-
-	taskInfo := data.GetTaskByID("85zt8cyjd")
-
-	//TODO: Completar el workflow para CLickup. Ver si lo tengo en Clickup sirve
+func createWorkflow(d data.Data) metrics.Workflow {
 	wf := metrics.Workflow{
-		Statuses: map[string]metrics.Status{},
+		Statuses: make(map[string]metrics.Status),
 	}
 
-	for _, status := range cli.GetWorkflow().Statuses {
+	for _, status := range d.GetWorkflow().Statuses {
 		mts := metrics.Status{
 			Name:       status.Name,
 			Pending:    status.Pending,
@@ -74,9 +63,10 @@ func main() {
 		clickup.StatusDeployed,
 		clickup.StatusComplete)
 
-	metrics.InitMetrics(wf)
-	tasks := []metrics.TaskInfo{}
+	return wf
+}
 
+func prepareHistory(taskInfo data.TaskInfo) []metrics.Transition {
 	history := []metrics.Transition{}
 
 	for _, transition := range taskInfo.History {
@@ -87,20 +77,39 @@ func main() {
 		})
 	}
 
+	return history
+}
+
+func main() {
+	err := configuration.LoadEnvironmentVariables()
+	if err != nil {
+		log.Fatal("Error loading .env file:", err)
+	}
+	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey, configuration.GetEnvironmentVariables().Token)
+
+	data.SetDataSource(cli)
+
+	wf := createWorkflow(cli)
+
+	taskInfo := data.GetTaskByID("85zt8cyjd")
+	history := prepareHistory(*taskInfo)
+
+	tasks := []metrics.TaskInfo{}
 	tasks = append(tasks, metrics.TaskInfo{
 		Id:        taskInfo.Id,
 		Name:      taskInfo.Name,
 		StartDate: taskInfo.StartDate,
-		DueDate:   "",
+		DueDate:   taskInfo.DueDate,
 		History:   history,
 	})
 
+	metrics.InitMetrics(wf)
 	metrics.SetInfo(tasks)
 
 	metricsPerTask := metrics.CalculateMetrics()
 
 	for _, result := range metricsPerTask {
-		fmt.Printf("Task ID: %s | %s | %s\n", taskInfo.Id, taskInfo.Name, taskInfo.StartDate)
+		fmt.Printf("Task ID: %s | %s | %s | %s\n", result.TaskInfo.Id, result.TaskInfo.Name, result.TaskInfo.StartDate, result.TaskInfo.DueDate)
 		fmt.Printf("Lead Time: %d | Cycle Time: %d | Blocked Time: %d | Flow Efficiency: %.2f\n", result.Metrics.LeadTime, result.Metrics.CycleTime, result.Metrics.BlockedTime, result.Metrics.FlowEfficiency)
 	}
 

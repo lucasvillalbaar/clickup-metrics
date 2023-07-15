@@ -22,8 +22,8 @@ type TimeSpent struct {
 type MetricsPerState map[string]*TimeSpent
 
 type MetricsPerTask struct {
-	TaskId  string  `json:"task_id"`
-	Metrics Metrics `json:"metrics"`
+	TaskInfo TaskInfo `json:"task_info"`
+	Metrics  Metrics  `json:"metrics"`
 }
 
 type Status struct {
@@ -146,7 +146,7 @@ func CalculateMetrics() []MetricsPerTask {
 	for _, ti := range taskInfo {
 		mpt := calculateTimePerState(ti)
 		metrics := MetricsPerTask{
-			TaskId: ti.Id,
+			TaskInfo: ti,
 		}
 		for status, entry := range *mpt {
 			metrics.Metrics.LeadTime += entry.TimeSpent
