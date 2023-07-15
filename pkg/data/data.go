@@ -16,6 +16,7 @@ type Transition struct {
 type TaskHeaderData struct {
 	Id        string
 	Name      string
+	CustomId  string
 	StartDate string
 	DueDate   string
 }

@@ -96,6 +96,7 @@ func getTaskHeaderData(taskId string) (data.TaskHeaderData, error) {
 
 	return data.TaskHeaderData{
 		Id:        response.Id,
+		CustomId:  response.CustomId,
 		Name:      response.Name,
 		StartDate: response.StartDate,
 		DueDate:   response.DueDate,
