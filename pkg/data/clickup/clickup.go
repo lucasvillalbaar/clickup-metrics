@@ -158,7 +158,7 @@ func (s *Session) GetWorkflow() *data.Workflow {
 	var statuses []data.Status
 	statuses = append(statuses, data.Status{
 		Name:       StatusToDo,
-		Pending:    true,
+		Pending:    false,
 		InProgress: false,
 		Blocked:    false,
 		Done:       false,
