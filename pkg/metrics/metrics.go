@@ -80,6 +80,9 @@ func calculateTimePerState(taskInfo TaskInfo) *MetricsPerState {
 	// Set the start date of the first transition to the same value as the task start date
 	metrics[taskInfo.History[0].Before].StartDate = taskInfo.StartDate
 	for _, entry := range taskInfo.History {
+		if entry.Date < taskInfo.StartDate {
+			continue
+		}
 		// Complete Date for the new status
 		statusAfter := entry.After
 		metricForAfterStatus := metrics[statusAfter]
