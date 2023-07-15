@@ -200,8 +200,8 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Done:       false,
 	}, data.Status{
 		Name:       StatusReadyToDeploy,
-		Pending:    false,
-		InProgress: true,
+		Pending:    true,
+		InProgress: false,
 		Blocked:    false,
 		Done:       false,
 	}, data.Status{
