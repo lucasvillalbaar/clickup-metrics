@@ -20,15 +20,17 @@ func getTaskMetricsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve the task metrics for the specified task ID
 	taskMetrics, err := getTaskMetrics(taskID)
-	switch err.Error() {
-	case "token is expired":
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, `{"error": "Clickup Token expired. Get a new one and do the request again"}`)
-		return
-	case "api key is expired or not valid":
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, `{"error": "Api Key is expired or is not valid. Get a new one and do the request again"}`)
-		return
+	if err != nil {
+		switch err.Error() {
+		case "token is expired":
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprint(w, `{"error": "Clickup Token expired. Get a new one and do the request again"}`)
+			return
+		case "api key is expired or is not valid":
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprint(w, `{"error": "Api Key is expired or is not valid. Get a new one and do the request again"}`)
+			return
+		}
 	}
 
 	// Marshal the task metrics to JSON
