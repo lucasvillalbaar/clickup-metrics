@@ -50,7 +50,7 @@ type Workflow struct {
 
 type Data interface {
 	GetTasksWithFilter(filter Filter) []TaskHeaderData
-	GetTaskByID(id string) *TaskInfo
+	GetTaskByID(id string) (*TaskInfo, error)
 	GetHistoryPerTask(ids []string) *map[string]TaskInfo
 	GetWorkflow() *Workflow
 }
@@ -65,7 +65,7 @@ func GetTasksWithFilter(filter Filter) []TaskHeaderData {
 	return data.GetTasksWithFilter(filter)
 }
 
-func GetTaskByID(id string) *TaskInfo {
+func GetTaskByID(id string) (*TaskInfo, error) {
 	return data.GetTaskByID(id)
 }
 

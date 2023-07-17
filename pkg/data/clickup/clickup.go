@@ -2,6 +2,7 @@ package clickup
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -40,7 +41,7 @@ type ResponseGetTask struct {
 
 // getTaskHistory retrieves the task history from the ClickUp API
 func getTaskHistory(taskId string) ([]byte, error) {
-	url := fmt.Sprintf("https://app.clickup.com/tasks/v1/task/%s/history?reverse=true&hist_fields%%5B%%5D=status", taskId)
+	url := fmt.Sprintf(EndpointTaskHistory, taskId)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -54,6 +55,11 @@ func getTaskHistory(taskId string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error performing HTTP request: %v", err)
 	}
+
+	if resp.StatusCode == 401 {
+		return nil, errors.New("token is expired")
+	}
+
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
@@ -66,7 +72,7 @@ func getTaskHistory(taskId string) ([]byte, error) {
 
 // getTaskHeaderData retrieves the task header data from the ClickUp API
 func getTaskHeaderData(taskId string) (data.TaskHeaderData, error) {
-	url := fmt.Sprintf("https://api.clickup.com/api/v2/task/%s", taskId)
+	url := fmt.Sprintf(EndpointTaskInfo, taskId)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -79,6 +85,10 @@ func getTaskHeaderData(taskId string) (data.TaskHeaderData, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		return data.TaskHeaderData{}, fmt.Errorf("error performing HTTP request: %v", err)
+	}
+
+	if resp.StatusCode == 401 {
+		return data.TaskHeaderData{}, errors.New("api key is expired or is not valid")
 	}
 	defer resp.Body.Close()
 
@@ -114,16 +124,23 @@ func parserJSON(inputData []byte) []data.Transition {
 }
 
 // getTaskInfo retrieves the task information including history and header data
-func getTaskInfo(taskId string) *data.TaskInfo {
-	historyData, _ := getTaskHistory(taskId)
-	taskHeaderData, _ := getTaskHeaderData(taskId)
+func getTaskInfo(taskId string) (*data.TaskInfo, error) {
+	historyData, err := getTaskHistory(taskId)
+	if err != nil {
+		return &data.TaskInfo{}, err
+	}
+	taskHeaderData, err := getTaskHeaderData(taskId)
+
+	if err != nil {
+		return &data.TaskInfo{}, err
+	}
 
 	history := parserJSON([]byte(historyData))
 
 	return &data.TaskInfo{
 		TaskHeaderData: taskHeaderData,
 		History:        history,
-	}
+	}, nil
 }
 
 type Session struct {
@@ -146,7 +163,7 @@ func (s *Session) GetTasksWithFilter(filter data.Filter) []data.TaskHeaderData {
 	return nil
 }
 
-func (s *Session) GetTaskByID(id string) *data.TaskInfo {
+func (s *Session) GetTaskByID(id string) (*data.TaskInfo, error) {
 	return getTaskInfo(id)
 }
 

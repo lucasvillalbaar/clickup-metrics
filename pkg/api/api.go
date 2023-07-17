@@ -48,8 +48,12 @@ func Init() *mux.Router {
 }
 
 // getTaskMetrics retrieves the metrics for a specific task
-func getTaskMetrics(taskID string) TaskMetricsResponse {
-	taskInfo := data.GetTaskByID(taskID)
+func getTaskMetrics(taskID string) (TaskMetricsResponse, error) {
+	taskInfo, err := data.GetTaskByID(taskID)
+	if err != nil {
+		return TaskMetricsResponse{}, err
+	}
+
 	history := prepareHistory(*taskInfo)
 
 	tasks := []metrics.TaskInfo{}
@@ -79,8 +83,8 @@ func getTaskMetrics(taskID string) TaskMetricsResponse {
 			CycleTime:      result.Metrics.CycleTime,
 			BlockedTime:    result.Metrics.BlockedTime,
 			FlowEfficiency: result.Metrics.FlowEfficiency,
-		}
+		}, nil
 	}
 
-	return TaskMetricsResponse{}
+	return TaskMetricsResponse{}, nil
 }
