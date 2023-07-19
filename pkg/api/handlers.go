@@ -19,7 +19,7 @@ func getTaskMetricsHandler(w http.ResponseWriter, r *http.Request) {
 	taskID := vars["task_id"]
 
 	// Retrieve the task metrics for the specified task ID
-	taskMetrics, err := getTaskMetrics(taskID)
+	taskMetrics, err := getTaskMetrics(r.Context(), taskID)
 	if err != nil {
 		switch err.Error() {
 		case "token is expired":

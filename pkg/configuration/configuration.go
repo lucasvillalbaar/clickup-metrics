@@ -27,12 +27,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type EnvVars struct {
-	Token  string
 	ApiKey string
 }
 
@@ -56,13 +53,11 @@ func GetEnvironmentVariables() EnvVars {
 // LoadEnvironmentVariables loads the environment variables from the .env file.
 // It returns an error if there was a problem loading the file.
 func LoadEnvironmentVariables() error {
-	err := godotenv.Load(".env")
-	if err != nil {
-		return fmt.Errorf("error loading .env file: %v", err)
-	}
 	envVars = EnvVars{
-		Token:  getEnvVariable("TOKEN"),
 		ApiKey: getEnvVariable("API_KEY"),
+	}
+	if envVars.ApiKey == "" {
+		return fmt.Errorf("API_KEY not found")
 	}
 
 	return nil

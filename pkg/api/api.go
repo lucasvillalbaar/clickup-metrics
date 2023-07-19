@@ -1,7 +1,9 @@
 package api
 
 import (
+	"context"
 	"log"
+	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/lucasvillalbaar/clickup-metrics/pkg/configuration"
@@ -22,15 +24,20 @@ type TaskMetricsResponse struct {
 	FlowEfficiency float64 `json:"flow_efficiency"`
 }
 
+const (
+	ContextClickUpToken = "clickup_token"
+)
+
 var wf metrics.Workflow
 
 // initialization loads environment variables, initializes the data source, and creates the workflow
-func initialization() {
+func configureDataSource(ctx context.Context) {
 	err := configuration.LoadEnvironmentVariables()
 	if err != nil {
 		log.Fatal("Error loading .env file:", err)
 	}
-	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey, configuration.GetEnvironmentVariables().Token)
+	token := ctx.Value(ContextClickUpToken).(string)
+	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey, token)
 
 	data.SetDataSource(cli)
 
@@ -39,16 +46,31 @@ func initialization() {
 
 // Init initializes the API router and sets up the routes
 func Init() *mux.Router {
-	initialization()
 	router := mux.NewRouter()
+
+	router.Use(authInterceptor)
 
 	router.HandleFunc("/metrics/{task_id}", getTaskMetricsHandler).Methods("GET")
 
 	return router
 }
 
+// authInterceptor es el interceptor que se ejecutará antes de manejar la solicitud
+func authInterceptor(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := r.Header.Get("Authorization")
+
+		ctx := context.WithValue(r.Context(), ContextClickUpToken, token)
+
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 // getTaskMetrics retrieves the metrics for a specific task
-func getTaskMetrics(taskID string) (TaskMetricsResponse, error) {
+func getTaskMetrics(ctx context.Context, taskID string) (TaskMetricsResponse, error) {
+	configureDataSource(ctx)
 	taskInfo, err := data.GetTaskByID(taskID)
 	if err != nil {
 		return TaskMetricsResponse{}, err

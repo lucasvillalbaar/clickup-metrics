@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lucasvillalbaar/clickup-metrics/pkg/configuration"
 	"github.com/lucasvillalbaar/clickup-metrics/pkg/data"
 )
 
@@ -48,10 +47,11 @@ func getTaskHistory(taskId string) ([]byte, error) {
 		return nil, fmt.Errorf("error creating HTTP request: %v", err)
 	}
 
-	req.Header.Set("Authorization", "Bearer "+configuration.GetEnvironmentVariables().Token)
+	req.Header.Set("Authorization", s.token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+
 	if err != nil {
 		return nil, fmt.Errorf("error performing HTTP request: %v", err)
 	}
@@ -60,9 +60,9 @@ func getTaskHistory(taskId string) ([]byte, error) {
 		return nil, errors.New("token is expired")
 	}
 
+	body, err := io.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
@@ -79,7 +79,7 @@ func getTaskHeaderData(taskId string) (data.TaskHeaderData, error) {
 		return data.TaskHeaderData{}, fmt.Errorf("error creating HTTP request: %v", err)
 	}
 
-	req.Header.Set("Authorization", configuration.GetEnvironmentVariables().ApiKey)
+	req.Header.Set("Authorization", s.apiKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
