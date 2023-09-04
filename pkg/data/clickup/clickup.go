@@ -19,6 +19,7 @@ const (
 	StatusInDefinitionDev = "in definition dev"
 	StatusToDevelop       = "to develop"
 	StatusInDevelopment   = "in development"
+	StatusInTesting       = "in testing"
 	StatusBlocked         = "blocked"
 	StatusReadyToDeploy   = "ready to deploy"
 	StatusDeployed        = "deployed"
@@ -26,7 +27,7 @@ const (
 )
 
 const (
-	EndpointTaskHistory = "https://app.clickup.com/tasks/v1/task/%s/history?reverse=true&hist_fields%%5B%%5D=status"
+	EndpointTaskHistory = "https://prod-us-east-2-2.clickup.com/tasks/v1/task/%s/history?reverse=true&hist_fields%%5B%%5D=status"
 	EndpointTaskInfo    = "https://api.clickup.com/api/v2/task/%s"
 )
 
@@ -205,6 +206,12 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Done:       false,
 	}, data.Status{
 		Name:       StatusInDevelopment,
+		Pending:    false,
+		InProgress: true,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
+		Name:       StatusInTesting,
 		Pending:    false,
 		InProgress: true,
 		Blocked:    false,
