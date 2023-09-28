@@ -22,8 +22,9 @@ type TimeSpent struct {
 type MetricsPerState map[string]*TimeSpent
 
 type MetricsPerTask struct {
-	TaskInfo TaskInfo `json:"task_info"`
-	Metrics  Metrics  `json:"metrics"`
+	TaskInfo        TaskInfo        `json:"task_info"`
+	Metrics         Metrics         `json:"metrics"`
+	MetricsPerState MetricsPerState `json:"metrics_per_state"`
 }
 
 type Status struct {
@@ -145,13 +146,15 @@ func calcTimeSpent(time *TimeSpent) int {
 // calculateMetrics calculates the overall metrics based on the time spent in each state
 func CalculateMetrics() []MetricsPerTask {
 	metricsPerTask := []MetricsPerTask{}
+	metricsPerState := &MetricsPerState{}
 
 	for _, ti := range taskInfo {
-		mpt := calculateTimePerState(ti)
+		metricsPerState = calculateTimePerState(ti)
 		metrics := MetricsPerTask{
-			TaskInfo: ti,
+			TaskInfo:        ti,
+			MetricsPerState: *metricsPerState,
 		}
-		for status, entry := range *mpt {
+		for status, entry := range *metricsPerState {
 			metrics.Metrics.LeadTime += entry.TimeSpent
 			if wf.Statuses[status].IsCycleTimeCalculable {
 				metrics.Metrics.CycleTime += entry.TimeSpent
