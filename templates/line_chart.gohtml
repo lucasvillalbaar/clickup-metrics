@@ -1,0 +1,32 @@
+{{define "line_chart"}}
+<div class="line-chart-widget"
+    style="position: relative; height: 250px; width: 45%; padding: 20px; display: inline-block;">
+    <canvas id="{{.ChartID}}"></canvas>
+</div>
+
+<script>
+    // Data for the line chart
+    var lineChartData = {
+        labels: {{.Labels | toJson}},
+    datasets: [{
+        label: '{{.ChartLabel}}',
+        borderColor: 'rgba(187, 206, 0, 1)',
+        borderWidth: 3,
+        data: {{.Data | toJson}},
+        }]
+    };
+
+    // Get the canvas context for the line chart
+    var lineChartCanvas = document.getElementById('{{.ChartID}}').getContext('2d');
+
+    // Create the line chart
+    var lineChart = new Chart(lineChartCanvas, {
+        type: 'line',
+        data: lineChartData,
+        options: {
+            maintainAspectRatio: false, // Disable default aspect ratio
+            responsive: true, // Enable responsiveness
+        },
+    });
+</script>
+{{end}}

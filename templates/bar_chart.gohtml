@@ -1,0 +1,32 @@
+{{define "bar_chart"}}
+<div class="bar-chart-widget" style="padding: 20px;">
+    <canvas id="{{.ChartID}}"></canvas>
+</div>
+
+<script>
+    // Data for the bar chart
+    var barChartData = {
+        labels: {{.Labels | toJson}},
+        datasets: [{
+            label: '{{.ChartLabel}}',
+            backgroundColor: 'rgba(187, 206, 0, 0.5)',
+            borderColor: 'rgba(187, 206, 0, 1)',
+            borderWidth: 1,
+            data: {{.Data | toJson}},
+        }]
+    };
+
+    // Get the canvas context for the bar chart
+    var barChartCanvas = document.getElementById('{{.ChartID}}').getContext('2d');
+
+    // Create the bar chart
+    var barChart = new Chart(barChartCanvas, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+        }
+    });
+</script>
+{{end}}

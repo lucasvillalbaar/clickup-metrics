@@ -54,8 +54,13 @@ func Init() *mux.Router {
 	router := mux.NewRouter()
 
 	router.Use(authInterceptor)
+	router.HandleFunc("/dashboard", getDashboardHandler).Methods("GET")
 
 	router.HandleFunc("/metrics/{task_id}", getTaskMetricsHandler).Methods("GET")
+
+	// Ruta para servir archivos estáticos (por ejemplo, CSS)
+	staticFileServer := http.FileServer(http.Dir("./static"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticFileServer))
 
 	return router
 }

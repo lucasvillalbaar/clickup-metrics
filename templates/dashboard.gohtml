@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Métricas Kanban</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <h1>MÉTRICAS KANBAN</h1>
+
+    <div class="date-selector-block">
+        <label for="startDate">Desde</label>
+        <input type="date" id="startDate" name="startDate">
+
+        <label for="endDate">Hasta</label>
+        <input type="date" id="endDate" name="endDate">
+
+        <button onclick="calculate()">Calculate</button>
+    </div>
+
+    {{template "average_metrics"}}
+
+    <div class="charts-block">
+        {{template "line_chart" .LeadTimeData}}
+    
+        {{template "line_chart" .CycleTimeData}}
+
+        {{template "line_chart" .BlockedTimeData}}
+
+        {{template "line_chart" .FlowEfficiencyData}}
+
+        {{template "bar_chart" .MergeRequestTimeToMerge}}
+
+        {{template "bar_chart" .MergeRequestSize}}
+    </div>
+
+    <h2>TICKETS ANALIZADOS</h2>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Custom ID</th>
+            <th>Nombre</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Lead Time</th>
+            <th>Cycle Time</th>
+            <th>Blocked Time</th>
+            <th>Flow Efficiency</th>
+        </tr>
+        {{range .DatosList}}
+        <tr>
+            <td class="centered">{{.ID}}</td>
+            <td class="centered">{{.CustomID}}</td>
+            <td>{{.Nombre}}</td>
+            <td class="centered">{{.FechaInicio}}</td>
+            <td class="centered">{{.FechaFin}}</td>
+            <td class="centered">{{.LeadTime}}</td>
+            <td class="centered">{{.CycleTime}}</td>
+            <td class="centered">{{.BlockedTime}}</td>
+            <td class="flow-efficiency">{{.FlowEfficiency}}</td>
+        </tr>
+        {{end}}
+    </table>
+    <!-- Add JavaScript here to handle the "Calculate" button -->
+    <script>
+        function calculate() {
+            // Write your code here to perform calculations with the selected dates
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+
+            // You can then do whatever is necessary with these dates
+            console.log("Start Date: " + startDate);
+            console.log("End Date: " + endDate);
+        }
+    </script>
+</body>
+
+{{template "footer"}}
+
+</html>
