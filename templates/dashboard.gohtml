@@ -12,10 +12,10 @@
 
     <div class="date-selector-block">
         <label for="startDate">Desde</label>
-        <input type="date" id="startDate" name="startDate">
+        <input type="date" id="startDate" name="startDate" value="{{.StartDate}}">
 
         <label for="endDate">Hasta</label>
-        <input type="date" id="endDate" name="endDate">
+        <input type="date" id="endDate" name="endDate" value="{{.EndDate}}">
 
         <button onclick="calculate()">Calculate</button>
     </div>
@@ -64,18 +64,20 @@
         </tr>
         {{end}}
     </table>
-    <!-- Add JavaScript here to handle the "Calculate" button -->
+
     <script>
         function calculate() {
-            // Write your code here to perform calculations with the selected dates
-            var startDate = document.getElementById("startDate").value;
-            var endDate = document.getElementById("endDate").value;
-
-            // You can then do whatever is necessary with these dates
-            console.log("Start Date: " + startDate);
-            console.log("End Date: " + endDate);
+            // Get the selected dates
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+    
+            // Construct the new URL with the selected dates as query parameters
+            let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate;
+    
+            // Redirect the user to the new URL
+            window.location.href = newURL;
         }
-    </script>
+    </script
 </body>
 
 {{template "footer"}}

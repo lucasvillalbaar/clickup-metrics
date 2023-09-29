@@ -56,6 +56,10 @@ func getTaskMetricsHandler(w http.ResponseWriter, r *http.Request) {
 
 func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 
+	// Extract query parameters from the request
+	startDate := r.URL.Query().Get("start_date")
+	endDate := r.URL.Query().Get("end_date")
+
 	// Estructura para almacenar los datos
 	type Datos struct {
 		ID             string
@@ -177,6 +181,8 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		DatosList               []Datos
+		StartDate               string
+		EndDate                 string
 		LeadTimeData            ChartData
 		CycleTimeData           ChartData
 		BlockedTimeData         ChartData
@@ -185,6 +191,8 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 		MergeRequestSize        ChartData
 	}{
 		DatosList:               datosList,
+		StartDate:               startDate,
+		EndDate:                 endDate,
 		LeadTimeData:            leadTimeData,
 		CycleTimeData:           cycleTimeData,
 		BlockedTimeData:         blockedTimeData,
