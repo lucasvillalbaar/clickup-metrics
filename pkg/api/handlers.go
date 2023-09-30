@@ -101,6 +101,8 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/average_metrics.gohtml",
 			"templates/line_chart.gohtml",
 			"templates/bar_chart.gohtml",
+			"templates/tickets_table.gohtml",
+			"templates/scripts.gohtml",
 			"templates/footer.gohtml")
 
 	if err != nil {

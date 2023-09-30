@@ -1,0 +1,15 @@
+{{define "scripts"}}
+<script>
+    function calculate() {
+        // Get the selected dates
+        let startDate = document.getElementById("startDate").value;
+        let endDate = document.getElementById("endDate").value;
+
+        // Construct the new URL with the selected dates as query parameters
+        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate;
+
+        // Redirect the user to the new URL
+        window.location.href = newURL;
+    }
+</script>
+{{end}}
