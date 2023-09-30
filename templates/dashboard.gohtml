@@ -50,13 +50,13 @@
             <th>Blocked Time</th>
             <th>Flow Efficiency</th>
         </tr>
-        {{range .DatosList}}
+        {{range .TaskMetrics}}
         <tr>
-            <td class="centered">{{.ID}}</td>
-            <td class="centered">{{.CustomID}}</td>
-            <td>{{.Nombre}}</td>
-            <td class="centered">{{.FechaInicio}}</td>
-            <td class="centered">{{.FechaFin}}</td>
+            <td class="centered">{{.Id}}</td>
+            <td class="centered">{{.CustomId}}</td>
+            <td>{{.Name}}</td>
+            <td class="centered">{{.StartDate}}</td>
+            <td class="centered">{{.DueDate}}</td>
             <td class="centered">{{.LeadTime}}</td>
             <td class="centered">{{.CycleTime}}</td>
             <td class="centered">{{.BlockedTime}}</td>

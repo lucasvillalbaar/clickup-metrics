@@ -10,6 +10,36 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type ChartData struct {
+	ChartID    string
+	ChartLabel string
+	Data       []int
+	Labels     []string
+}
+type DashboardData struct {
+	StartDate               string
+	EndDate                 string
+	TaskMetrics             []TaskMetricsResponse
+	LeadTimeData            ChartData
+	CycleTimeData           ChartData
+	BlockedTimeData         ChartData
+	FlowEfficiencyData      ChartData
+	MergeRequestTimeToMerge ChartData
+	MergeRequestSize        ChartData
+}
+
+type Datos struct {
+	ID             string
+	CustomID       string
+	Nombre         string
+	FechaInicio    string
+	FechaFin       string
+	LeadTime       int
+	CycleTime      int
+	BlockedTime    int
+	FlowEfficiency string
+}
+
 // getTaskMetricsHandler is the handler function for the GET /metrics/{task_id} endpoint.
 // It retrieves the task metrics for the specified task ID and returns them as JSON.
 func getTaskMetricsHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,19 +90,6 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
 
-	// Estructura para almacenar los datos
-	type Datos struct {
-		ID             string
-		CustomID       string
-		Nombre         string
-		FechaInicio    string
-		FechaFin       string
-		LeadTime       int
-		CycleTime      int
-		BlockedTime    int
-		FlowEfficiency string
-	}
-
 	// Register the toJson function as a custom template function
 	funcMap := template.FuncMap{
 		"toJson": toJson,
@@ -86,55 +103,47 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/bar_chart.gohtml",
 			"templates/footer.gohtml")
 
-	//tmpl, err := template.New("dashboard").Parse(htmlTemplate)
 	if err != nil {
 		log.Println("Error when reading template: ", err)
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
 	}
 
-	// Datos de ejemplo
-	datosList := []Datos{
-		{
-			ID:             "85zruhhbb",
-			CustomID:       "CORE-2",
-			Nombre:         "Instalar app mobile en el celular",
-			FechaInicio:    "2023-04-05",
-			FechaFin:       "2023-04-24",
-			LeadTime:       92,
-			CycleTime:      29,
-			BlockedTime:    63,
-			FlowEfficiency: "-117,00%",
-		},
-		{
-			ID:             "85zruhhbb",
-			CustomID:       "CORE-234",
-			Nombre:         "Inssdsdlular",
-			FechaInicio:    "2023-04-05",
-			FechaFin:       "2023-04-24",
-			LeadTime:       92,
-			CycleTime:      29,
-			BlockedTime:    63,
-			FlowEfficiency: "-117,00%",
-		},
-		{
-			ID:             "85zruhhbb",
-			CustomID:       "CORE-234",
-			Nombre:         "Inssdsdlular",
-			FechaInicio:    "2023-04-05",
-			FechaFin:       "2023-04-24",
-			LeadTime:       92,
-			CycleTime:      29,
-			BlockedTime:    63,
-			FlowEfficiency: "-117,00%",
-		},
-	}
+	data := getDashboardData(startDate, endDate)
 
-	type ChartData struct {
-		ChartID    string
-		ChartLabel string
-		Data       []int
-		Labels     []string
+	// Rellenar la plantilla con los datos y escribir la respuesta HTTP
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		log.Println("Error when executing template: ", err)
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return
+	}
+}
+
+func getDashboardData(startDate string, endDate string) *DashboardData {
+	taskMetrics := []TaskMetricsResponse{
+		{
+			Id:             "85zruhhba",
+			CustomId:       "CORE-1",
+			Name:           "Instalar app mobile en el celular",
+			StartDate:      "2023-04-05",
+			DueDate:        "2023-04-24",
+			LeadTime:       92,
+			CycleTime:      29,
+			BlockedTime:    63,
+			FlowEfficiency: -117.00,
+		},
+		{
+			Id:             "85zruhhbb",
+			CustomId:       "CORE-2",
+			Name:           "sjkjshdksjhdkjshdkjs",
+			StartDate:      "2023-04-05",
+			DueDate:        "2023-04-24",
+			LeadTime:       92,
+			CycleTime:      29,
+			BlockedTime:    63,
+			FlowEfficiency: -117.00,
+		},
 	}
 
 	leadTimeData := ChartData{
@@ -179,18 +188,8 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 		Labels:     []string{"Small (50)", "Medium (51-200)", "Large (201-500)", "Very Large (+500)"},
 	}
 
-	data := struct {
-		DatosList               []Datos
-		StartDate               string
-		EndDate                 string
-		LeadTimeData            ChartData
-		CycleTimeData           ChartData
-		BlockedTimeData         ChartData
-		FlowEfficiencyData      ChartData
-		MergeRequestTimeToMerge ChartData
-		MergeRequestSize        ChartData
-	}{
-		DatosList:               datosList,
+	return &DashboardData{
+		TaskMetrics:             taskMetrics,
 		StartDate:               startDate,
 		EndDate:                 endDate,
 		LeadTimeData:            leadTimeData,
@@ -199,14 +198,6 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 		FlowEfficiencyData:      flowEfficiencyData,
 		MergeRequestTimeToMerge: mergeRequestTimeToMerge,
 		MergeRequestSize:        mergeRequestSize,
-	}
-
-	// Rellenar la plantilla con los datos y escribir la respuesta HTTP
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		log.Println("Error when executing template: ", err)
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		return
 	}
 }
 
