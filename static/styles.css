@@ -27,8 +27,8 @@ table {
   width: 100%;
 }
 
-tr {
-  font-size: 14px;
+tbody tr {
+  font-size: 13px;
 }
 
 /* Style for table cells in Lead Time, Cycle Time, and Blocked Time columns */
@@ -37,10 +37,8 @@ td.centered {
   text-align: center; /* Center the content in these columns */
 }
 
-/* Style for Flow Efficiency column (right-aligned) */
-td.flow-efficiency {
-  padding: 5px;
-  text-align: right; /* Right-align the content in this column */
+.date-col{
+    width: 90px;
 }
 
 /* Style for H1 elements */
