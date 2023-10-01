@@ -55,6 +55,7 @@ func Init() *mux.Router {
 
 	router.Use(authInterceptor)
 	router.HandleFunc("/dashboard", getDashboardHandler).Methods("GET")
+	router.HandleFunc("/token", setTokenHandler).Methods("POST")
 
 	router.HandleFunc("/metrics/{task_id}", getTaskMetricsHandler).Methods("GET")
 

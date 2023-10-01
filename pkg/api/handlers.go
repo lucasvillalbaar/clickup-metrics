@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"text/template"
 
@@ -147,7 +149,8 @@ func getDashboardData(startDate string, endDate string, tickets string) *Dashboa
 		EndDate:   endDate,
 	}
 
-	ctx := context.WithValue(context.TODO(), ContextClickUpToken, "Bearer "+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAifQ.eyJ1c2VyIjo2MTQ4MjM5NCwidmFsaWRhdGVkIjp0cnVlLCJ3c19rZXkiOjU1NzgyMDQyMTcsInNlc3Npb25fdG9rZW4iOnRydWUsImlhdCI6MTY5NTk5NjczNiwiZXhwIjoxNjk2MTY5NTM2fQ.HgHw2WdjENjxdwgbE3TnzqiacsK6lIo7rWfrceV7iac")
+	token := os.Getenv("CLICKUP_TOKEN")
+	ctx := context.WithValue(context.TODO(), ContextClickUpToken, "Bearer "+token)
 
 	ticketsSlice := strings.Split(tickets, ",")
 	leadTimeDataSlice := []int{}
@@ -238,4 +241,47 @@ func toJson(v interface{}) (string, error) {
 		return "", err
 	}
 	return string(jsonData), nil
+}
+
+type TokenRequestBody struct {
+	Token string `json:"token"`
+}
+
+type TokenResponse struct {
+	Message string `json:"message"`
+}
+
+func setTokenHandler(w http.ResponseWriter, r *http.Request) {
+	// Read the request body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Error reading the request body", http.StatusBadRequest)
+		return
+	}
+
+	// Decode the JSON body into a TokenRequestBody struct
+	var requestBody TokenRequestBody
+	if err := json.Unmarshal(body, &requestBody); err != nil {
+		http.Error(w, "Error decoding the JSON body", http.StatusBadRequest)
+		return
+	}
+
+	// Get the token from the struct
+	tokenValue := requestBody.Token
+
+	// Set the token as an environment variable
+	os.Setenv("CLICKUP_TOKEN", tokenValue)
+
+	// Respond with a JSON success message
+	responseMessage := TokenResponse{Message: "Token saved successfully"}
+	responseJSON, err := json.Marshal(responseMessage)
+	if err != nil {
+		http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with a success message
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseJSON)
 }
