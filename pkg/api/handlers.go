@@ -178,9 +178,9 @@ func getDashboardData(startDate string, endDate string, tickets string) *Dashboa
 		leadTimeLabelsSlice = append(leadTimeLabelsSlice, ticketMetrics.CustomId)
 		cycleTimeDataSlice = append(cycleTimeDataSlice, ticketMetrics.CycleTime)
 		cycleTimeLabelsSlice = append(cycleTimeLabelsSlice, ticketMetrics.CustomId)
-		blockedTimeDataSlice = append(blockedTimeDataSlice, ticketMetrics.LeadTime)
+		blockedTimeDataSlice = append(blockedTimeDataSlice, ticketMetrics.BlockedTime)
 		blockedTimeLabelsSlice = append(blockedTimeLabelsSlice, ticketMetrics.CustomId)
-		flowEfficiencyDataSlice = append(flowEfficiencyDataSlice, ticketMetrics.LeadTime)
+		flowEfficiencyDataSlice = append(flowEfficiencyDataSlice, int(ticketMetrics.FlowEfficiency))
 		flowEfficiencyLabalsSlice = append(flowEfficiencyLabalsSlice, ticketMetrics.CustomId)
 		result.TaskMetrics = append(result.TaskMetrics, ticketMetrics)
 	}
