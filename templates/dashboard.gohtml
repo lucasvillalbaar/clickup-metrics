@@ -8,7 +8,21 @@
 </head>
 
 <body>
-    <h1>MÉTRICAS KANBAN</h1>
+    <div class="container">
+        <h1>MÉTRICAS KANBAN</h1>
+        <button id="openModalBtn" class="button-secondary">Configurar Token Clickup</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <h2>Configurar Token Clickup</h2>
+            <label for="tokenInput">Token</label>
+            <input type="text" id="tokenInput" name="tokenInput">
+            <button id="saveTokenBtn">Guardar</button>
+        </div>
+    </div>
 
     <div class="text-input-block">
         <label for="textArea">Tickets a analizar</label>
@@ -25,6 +39,7 @@
 
         <button onclick="calculate()">Calcular</button>
     </div>
+
 
     {{if gt (len .TaskMetrics) 0}}
 

@@ -15,4 +15,50 @@
         window.location.href = newURL;
     }
 </script>
+<script>
+    var openModalBtn = document.getElementById("openModalBtn");
+    var closeModalBtn = document.getElementById("closeModalBtn");
+    var modal = document.getElementById("myModal");
+
+    // Add a click event to the button to open the modal
+    openModalBtn.addEventListener("click", function () {
+        modal.style.display = "flex";
+    });
+
+    // Add a click event to the button to close the modal
+    closeModalBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
+    // Close the modal if the user clicks outside of it
+    window.addEventListener("click", function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    });
+
+    // Add a click event to the "Save" button
+    saveTokenBtn.addEventListener("click", function () {
+        // Get the value of the tokenInput field
+        var token = document.getElementById("tokenInput").value;
+
+        // Close the modal
+        modal.style.display = "none";
+
+        // Make an HTTP POST request with the token data
+        fetch('/your-api-endpoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: token })
+        })
+            .then(response => {
+                // Handle the response from the server if needed
+            })
+            .catch(error => {
+                // Handle any errors that occur during the request
+            });
+    });
+</script>
 {{end}}
