@@ -8,11 +8,31 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>MÉTRICAS KANBAN</h1>
-        <button id="openModalBtn" class="button-secondary">Configurar Token Clickup</button>
-    </div>
+    <div class="header-section">
+        <div class="container">
+            <h1>MÉTRICAS KANBAN</h1>
+            <button id="openModalBtn" class="button-secondary">Configurar Token Clickup</button>
+        </div>
+        <div class="text-input-block">
+            <label for="textArea">Tickets a analizar</label>
+            <br>
+            <textarea id="textArea" name="textArea" rows="2"
+                placeholder="#85aaaaaa, #85bbbbbb, #85cccccc..."></textarea>
+        </div>
 
+        <div class="date-selector-block">
+            <label for="startDate">Desde</label>
+            <input type="date" id="startDate" name="startDate" value="{{.StartDate}}">
+
+            <label for="endDate">Hasta</label>
+            <input type="date" id="endDate" name="endDate" value="{{.EndDate}}">
+
+            <button id="calculateBtn" onclick="calculate()">
+                <span id="calculateText">Calcular</span>
+                <span id="spinner" class="spinner" style="display: none;"></span>
+            </button>
+        </div>
+    </div>
     <!-- Modal -->
     <div id="myModal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -25,48 +45,31 @@
         </div>
     </div>
 
-    <div class="text-input-block">
-        <label for="textArea">Tickets a analizar</label>
-        <br>
-        <textarea id="textArea" name="textArea" rows="2" placeholder="#85aaaaaa, #85bbbbbb, #85cccccc..."></textarea>
+    <div class="dashboard-data">
+        {{if gt (len .TaskMetrics) 0}}
+
+        {{template "average_metrics" . }}
+
+        <div class="charts-block">
+            {{template "line_chart" .LeadTimeData}}
+
+            {{template "line_chart" .CycleTimeData}}
+
+            {{template "line_chart" .BlockedTimeData}}
+
+            {{template "line_chart" .FlowEfficiencyData}}
+
+            <!--{{template "bar_chart" .MergeRequestTimeToMerge}}  -->
+
+            <!--{{template "bar_chart" .MergeRequestSize}} -->
+        </div>
+
+        {{template "tickets_table" . }}
+        {{end}}
+
+        {{template "scripts"}}
     </div>
 
-    <div class="date-selector-block">
-        <label for="startDate">Desde</label>
-        <input type="date" id="startDate" name="startDate" value="{{.StartDate}}">
-
-        <label for="endDate">Hasta</label>
-        <input type="date" id="endDate" name="endDate" value="{{.EndDate}}">
-
-        <button id="calculateBtn" onclick="calculate()">
-            <span id="calculateText">Calcular</span>
-            <span id="spinner" class="spinner" style="display: none;"></span>
-        </button>
-    </div>
-
-
-    {{if gt (len .TaskMetrics) 0}}
-
-    {{template "average_metrics" . }}
-
-    <div class="charts-block">
-        {{template "line_chart" .LeadTimeData}}
-
-        {{template "line_chart" .CycleTimeData}}
-
-        {{template "line_chart" .BlockedTimeData}}
-
-        {{template "line_chart" .FlowEfficiencyData}}
-
-        <!--{{template "bar_chart" .MergeRequestTimeToMerge}}  -->
-
-        <!--{{template "bar_chart" .MergeRequestSize}} -->
-    </div>
-
-    {{template "tickets_table" . }}
-    {{end}}
-
-    {{template "scripts"}}
 </body>
 
 {{template "footer"}}

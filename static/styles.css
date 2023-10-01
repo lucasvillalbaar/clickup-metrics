@@ -1,9 +1,20 @@
-/* Style for Arial font */
 body {
   font-family: Arial, sans-serif;
   max-width: 1200px;
   margin: 0 auto; /* Remove default margin from the body */
   padding: 0; /* Remove default padding from the body */
+  margin-bottom: 100px; /* Add a bottom margin of 100px */
+}
+
+.header-section {
+  position: fixed;
+  width: 1200px;
+  background-color: #ffffff; /* You can adjust the background color as needed */
+  z-index: 900; /* Ensure it appears above other content */
+}
+
+.dashboard-data {
+  padding-top: 270px;
 }
 
 /* Center the content horizontally */
@@ -147,6 +158,9 @@ footer {
   margin-top: 20px;
   padding: 5px 10px;
   border-radius: 10px; /* Rounded corners for the block */
+  position: fixed;
+  bottom: 0;
+  width: 1200px;
 }
 
 /* Footer Content Styles */
@@ -184,7 +198,7 @@ footer {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
-  z-index: 1;
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
