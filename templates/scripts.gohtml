@@ -1,6 +1,15 @@
 {{define "scripts"}}
 <script>
     function calculate() {
+        // Get references to the button and spinner elements
+        var calculateBtn = document.getElementById("calculateBtn");
+        var calculateText = document.getElementById("calculateText");
+        var spinner = document.getElementById("spinner");
+
+        // Show the spinner and hide the button text
+        spinner.style.display = "inline-block";
+        calculateText.style.display = "none";
+
         // Get the selected dates
         let startDate = document.getElementById("startDate").value;
         let endDate = document.getElementById("endDate").value;
@@ -9,10 +18,12 @@
         let tickets = document.getElementById("textArea").value;
 
         // Construct the new URL with the selected dates as query parameters
-        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&tickets=' + encodeURIComponent(tickets);;
+        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&tickets=' + encodeURIComponent(tickets);
 
-        // Redirect the user to the new URL
-        window.location.href = newURL;
+        // Redirect the user to the new URL after a slight delay to show the spinner
+        setTimeout(function () {
+            window.location.href = newURL;
+        }, 500); // You can adjust the delay time as needed
     }
 </script>
 <script>

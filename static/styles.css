@@ -37,8 +37,8 @@ td.centered {
   text-align: center; /* Center the content in these columns */
 }
 
-.date-col{
-    width: 90px;
+.date-col {
+  width: 90px;
 }
 
 /* Style for H1 elements */
@@ -245,6 +245,26 @@ footer {
 }
 
 .modal-content button {
-    margin-top: 20px;
+  margin-top: 20px;
+}
+
+/* Style for the spinner animation */
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3); /* Reduce border width */
+  border-top: 2px solid #0c1b34; /* Reduce border width */
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  animation: spin 1s linear infinite;
+  text-align: center;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -38,7 +38,10 @@
         <label for="endDate">Hasta</label>
         <input type="date" id="endDate" name="endDate" value="{{.EndDate}}">
 
-        <button onclick="calculate()">Calcular</button>
+        <button id="calculateBtn" onclick="calculate()">
+            <span id="calculateText">Calcular</span>
+            <span id="spinner" class="spinner" style="display: none;"></span>
+        </button>
     </div>
 
 
