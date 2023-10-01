@@ -24,6 +24,7 @@ type ChartData struct {
 type DashboardData struct {
 	StartDate               string
 	EndDate                 string
+	Tickets                 string
 	AvgLeadTime             int
 	AvgCycleTime            int
 	AvgBlockedTime          int
@@ -147,6 +148,7 @@ func getDashboardData(startDate string, endDate string, tickets string) *Dashboa
 	result := &DashboardData{
 		StartDate: startDate,
 		EndDate:   endDate,
+		Tickets:   tickets,
 	}
 
 	token := os.Getenv("CLICKUP_TOKEN")
