@@ -95,8 +95,8 @@ func ConvertUnixMillisToString(unixMillis string) (string, error) {
 	// Create a time.Time object using the milliseconds value
 	t := time.Unix(0, unixMillisInt*int64(time.Millisecond))
 
-	// Format the date and time using the desired format "YYYY-MM-DD HH:MM:SS"
-	formatted := t.Format("2006-01-02 15:04:05")
+	// Format the date and time using the desired format "YYYY-MM-DD"
+	formatted := t.Format("2006-01-02")
 
 	return formatted, nil
 }

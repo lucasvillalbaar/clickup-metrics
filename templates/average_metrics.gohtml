@@ -2,22 +2,22 @@
   <div class="average-metrics-widget">
     <div class="metrics-block">
       <h2>Lead Time</h2>
-      <p>26 días</p>
+      <p>{{.AvgLeadTime}} días</p>
     </div>
 
     <div class="metrics-block">
       <h2>Cycle Time</h2>
-      <p>13 días</p>
+      <p>{{.AvgCycleTime}} días</p>
     </div>
 
     <div class="metrics-block">
       <h2>Blocked Time</h2>
-      <p>4 días</p>
+      <p>{{.AvgBlockedTime}} días</p>
     </div>
 
     <div class="metrics-block">
       <h2>Flow Efficiency (Dev)</h2>
-      <p>86.50%</p>
+      <p>{{printf "%.2f" .AvgFlowEfficiency}}%</p>
     </div>
   </div>
 {{end}}

@@ -1,150 +1,152 @@
 /* Style for Arial font */
 body {
-    font-family: Arial, sans-serif;
-    max-width: 1200px;
-    margin: 0 auto; /* Remove default margin from the body */
-    padding: 0; /* Remove default padding from the body */
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto; /* Remove default margin from the body */
+  padding: 0; /* Remove default padding from the body */
 }
 
 /* Center the content horizontally */
 .container {
-    width: 80%; /* Adjust width as per your preference */
-    margin: 0 auto; /* Center the content horizontally within the container */
+  width: 80%; /* Adjust width as per your preference */
+  margin: 0 auto; /* Center the content horizontally within the container */
 }
 
 /* Style for table header */
 th {
-    background-color: #0c1b34;
-    color: white;
-    font-weight: bold;
-    padding: 10px; /* Add space around header content */
+  background-color: #0c1b34;
+  color: white;
+  font-weight: bold;
+  padding: 10px; /* Add space around header content */
 }
 
 /* Style for table border */
 table {
-    border: 2px solid #0c1b34;
-    border-collapse: collapse; /* Collapse adjacent borders into a single line */
-    width: 100%;
+  border: 2px solid #0c1b34;
+  border-collapse: collapse; /* Collapse adjacent borders into a single line */
+  width: 100%;
+}
+
+tr {
+  font-size: 14px;
 }
 
 /* Style for table cells in Lead Time, Cycle Time, and Blocked Time columns */
 td.centered {
-    padding: 5px;
-    text-align: center; /* Center the content in these columns */
+  padding: 5px;
+  text-align: center; /* Center the content in these columns */
 }
 
 /* Style for Flow Efficiency column (right-aligned) */
 td.flow-efficiency {
-    padding: 5px;
-    text-align: right; /* Right-align the content in this column */
+  padding: 5px;
+  text-align: right; /* Right-align the content in this column */
 }
 
 /* Style for H1 elements */
-h1, h2 {
-    color: #bbce00;
+h1,
+h2 {
+  color: #bbce00;
 }
 
 /* Add margin to the block containing date selectors and the button */
 .date-selector-block {
-    margin: 20px 0; /* Add margin top and bottom */
+  margin: 20px 0; /* Add margin top and bottom */
 }
 
 /* Style for the "Calculate" button */
 button {
-    background-color: #bbce00;
-    color: white;
-    padding: 10px 20px; /* Add padding to make the button more clickable */
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Add a smooth transition for hover effect */
-    border-radius: 10px;
+  background-color: #bbce00;
+  color: white;
+  padding: 10px 20px; /* Add padding to make the button more clickable */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add a smooth transition for hover effect */
+  border-radius: 10px;
 }
 
 /* Change background color on hover */
 button:hover {
-    background-color: #0c1b34;
+  background-color: #0c1b34;
 }
 
 /* Style for date input elements */
 input[type="date"] {
-    font-family: Arial, sans-serif; /* Set the font to Arial */
-    padding: 5px; /* Add padding to the input elements */
-    border-radius: 10px;
-    border: 1px solid #0c1b34; /* Add a 1px solid border with color */
+  font-family: Arial, sans-serif; /* Set the font to Arial */
+  padding: 5px; /* Add padding to the input elements */
+  border-radius: 10px;
+  border: 1px solid #0c1b34; /* Add a 1px solid border with color */
 }
-
 
 /* General styles for the metrics block */
 .average-metrics-widget {
-    display: flex; /* Make the blocks align in a row */
-    justify-content: space-between; /* Uniform space between blocks */
-    background-color: #0c1b34; /* Background color for the entire block */
-    padding: 10px; /* Inner spacing for the block */
-    color: white; /* Font color for the entire block */
-    margin-bottom: 20px;
-    border-radius: 10px; /* Rounded corners for the block */
+  display: flex; /* Make the blocks align in a row */
+  justify-content: space-between; /* Uniform space between blocks */
+  background-color: #0c1b34; /* Background color for the entire block */
+  padding: 10px; /* Inner spacing for the block */
+  color: white; /* Font color for the entire block */
+  margin-bottom: 20px;
+  border-radius: 10px; /* Rounded corners for the block */
 }
 
 /* Styles for the metrics blocks */
 .metrics-block {
-    text-align: center; /* Center the content of the block */
-    padding: 10px; /* Inner spacing for each block */
-    background-color: #0c1b34; /* Background color for each block */
+  text-align: center; /* Center the content of the block */
+  padding: 10px; /* Inner spacing for each block */
+  background-color: #0c1b34; /* Background color for each block */
 }
 
 /* Styles for the titles (h2) inside the metrics blocks */
 .metrics-block h2 {
-    background-color: #0c1b34; /* Background color for titles */
-    color: white; /* Font color for titles */
-    margin: 0; /* Remove top and bottom margin */
-    padding: 5px; /* Inner spacing for titles */
+  background-color: #0c1b34; /* Background color for titles */
+  color: white; /* Font color for titles */
+  margin: 0; /* Remove top and bottom margin */
+  padding: 5px; /* Inner spacing for titles */
 }
 
 /* Styles for the paragraph (p) inside the metrics blocks */
 .metrics-block p {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 /* Styles for the values (p) inside the metrics blocks */
 .metrics-block p {
-    margin: 0; /* Remove top and bottom margin */
+  margin: 0; /* Remove top and bottom margin */
 }
-
 
 /* Style for line chart widget container */
 .line-chart-widget {
-    width: 100%;
-    padding-bottom: 75%; /* 4:3 aspect ratio (75% = 3/4) */
-    position: relative;
-    height: 0;
-    overflow: hidden;
+  width: 100%;
+  padding-bottom: 75%; /* 4:3 aspect ratio (75% = 3/4) */
+  position: relative;
+  height: 0;
+  overflow: hidden;
 }
 
 /* Footer Styles */
 footer {
-    background-color: #0c1b34;
-    color: white;
-    margin-top: 20px;
-    padding: 5px 10px;
-    border-radius: 10px; /* Rounded corners for the block */
+  background-color: #0c1b34;
+  color: white;
+  margin-top: 20px;
+  padding: 5px 10px;
+  border-radius: 10px; /* Rounded corners for the block */
 }
 
 /* Footer Content Styles */
 .footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-
 .text-input-block {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .text-input-block label {
-    text-transform: uppercase;
-    display: block; 
-    font-weight: bold; 
-    color: #bbce00;
+  text-transform: uppercase;
+  display: block;
+  font-weight: bold;
+  color: #bbce00;
 }
 
 .text-input-block textarea {
