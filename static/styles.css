@@ -52,6 +52,11 @@ td.centered {
   width: 90px;
 }
 
+.fulldate-col {
+  width: 110px;
+}
+
+
 /* Style for H1 elements */
 h1,
 h2 {

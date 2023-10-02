@@ -13,6 +13,7 @@ import (
 	"text/template"
 
 	"github.com/gorilla/mux"
+	"github.com/lucasvillalbaar/clickup-metrics/pkg/mergerequests"
 )
 
 type ChartData struct {
@@ -34,6 +35,7 @@ type DashboardData struct {
 	CycleTimeData           ChartData
 	BlockedTimeData         ChartData
 	FlowEfficiencyData      ChartData
+	MergeRequests           []mergerequests.MergeRequest
 	MergeRequestTimeToMerge ChartData
 	MergeRequestSize        ChartData
 }
@@ -120,6 +122,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/line_chart.gohtml",
 			"templates/bar_chart.gohtml",
 			"templates/tickets_table.gohtml",
+			"templates/merge_requests_table.gohtml",
 			"templates/scripts.gohtml",
 			"templates/footer.gohtml")
 
@@ -220,21 +223,71 @@ func getDashboardData(startDate string, endDate string, tickets string) *Dashboa
 		Labels:     flowEfficiencyLabalsSlice,
 	}
 
-	result.MergeRequestTimeToMerge = ChartData{
-		ChartID:    "merge-request-time-to-merge-chart",
-		ChartLabel: "Merge Request - Time To Merge",
-		Data:       []int{39, 4, 0, 1, 1, 0, 1, 2},
-		Labels:     []string{"<1d", "1d", "2d", "3d", "4d", "5d", "6d", "+7d"},
-	}
+	gitlabToken := os.Getenv("GITLAB_TOKEN")
+	mrsCli := mergerequests.NewGitlabClient("5908940", "CORE", gitlabToken)
+	mrsSlice, _ := mrsCli.GetMergeRequestsMergedBetween(startDate, endDate)
 
-	result.MergeRequestSize = ChartData{
-		ChartID:    "merge-request-size-chart",
-		ChartLabel: "Merge Request - Size",
-		Data:       []int{20, 10, 11, 4},
-		Labels:     []string{"Small (50)", "Medium (51-200)", "Large (201-500)", "Very Large (+500)"},
+	result.MergeRequests = mrsSlice
+
+	result.MergeRequestTimeToMerge = initMergeRequestTimeToMergeChartData()
+	result.MergeRequestSize = initMergeRequestSizeChartData()
+	for _, mr := range result.MergeRequests {
+		result.MergeRequestTimeToMerge = appendMergeRequestTimeToMergeChartData(result.MergeRequestTimeToMerge, mr)
+		result.MergeRequestSize = appendMergeRequestSizeChartData(result.MergeRequestSize, mr)
 	}
 
 	return result
+}
+func initMergeRequestSizeChartData() ChartData {
+	return ChartData{
+		ChartID:    "merge-request-size-chart",
+		ChartLabel: "Merge Request - Size",
+		Data:       []int{0, 0, 0, 0},
+		Labels:     []string{"Small (50)", "Medium (51-200)", "Large (201-500)", "Very Large (+500)"},
+	}
+}
+
+func initMergeRequestTimeToMergeChartData() ChartData {
+	return ChartData{
+		ChartID:    "merge-request-time-to-merge-chart",
+		ChartLabel: "Merge Request - Time To Merge",
+		Data:       []int{0, 0, 0, 0, 0, 0, 0, 0},
+		Labels:     []string{"<1d", "1d", "2d", "3d", "4d", "5d", "6d", "+7d"},
+	}
+}
+
+func appendMergeRequestSizeChartData(size ChartData, mr mergerequests.MergeRequest) ChartData {
+	var index int
+	if mr.Size <= 50 {
+		index = 0
+	} else if mr.Size >= 51 && mr.Size <= 200 {
+		index = 1
+	} else if mr.Size >= 201 && mr.Size <= 500 {
+		index = 2
+	} else if mr.Size >= 501 {
+		index = 3
+	}
+
+	size.Data[index] = size.Data[index] + 1
+
+	return size
+}
+
+func appendMergeRequestTimeToMergeChartData(timeToMarge ChartData, mr mergerequests.MergeRequest) ChartData {
+	const MoreThan7Days = 7
+	days := mr.TimeToMerge
+
+	if days < 0 {
+		return timeToMarge
+	}
+
+	if days >= 7 {
+		timeToMarge.Data[MoreThan7Days] = timeToMarge.Data[MoreThan7Days] + 1
+		return timeToMarge
+	}
+
+	timeToMarge.Data[days] = timeToMarge.Data[days] + 1
+	return timeToMarge
 }
 
 func toJson(v interface{}) (string, error) {

@@ -1,0 +1,28 @@
+{{define "merge_requests_table"}}
+<h2>MERGE REQUESTS</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titulo</th>
+            <th>Creado</th>
+            <th>Mergeado</th>
+            <th>Tiempo</th>
+            <th>Tamaño</th>
+        </tr>
+    </thead>
+    {{range .MergeRequests}}
+    <tbody>
+        <tr>
+            <td class="centered">{{.ID}}</td>
+            <td>{{.Title}}</td>
+            <td class="centered fulldate-col">{{.CreatedAt}}</td>
+            <td class="centered fulldate-col">{{.MergedAt}}</td>
+            <td class="centered">{{.TimeToMerge}}</td>
+            <td class="centered">{{.Size}}</td>
+        </tr>
+    </tbody>
+    {{end}}
+</table>
+{{end}}

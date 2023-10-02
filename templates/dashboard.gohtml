@@ -59,12 +59,14 @@
 
             {{template "line_chart" .FlowEfficiencyData}}
 
-            <!--{{template "bar_chart" .MergeRequestTimeToMerge}}  -->
+            {{template "bar_chart" .MergeRequestTimeToMerge}} 
 
-            <!--{{template "bar_chart" .MergeRequestSize}} -->
+            {{template "bar_chart" .MergeRequestSize}}
         </div>
 
         {{template "tickets_table" . }}
+
+        {{template "merge_requests_table" . }}
         {{end}}
 
         {{template "scripts"}}
