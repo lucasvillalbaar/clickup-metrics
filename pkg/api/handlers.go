@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -121,6 +122,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/average_metrics.gohtml",
 			"templates/line_chart.gohtml",
 			"templates/bar_chart.gohtml",
+			"templates/no_data.gohtml",
 			"templates/tickets_table.gohtml",
 			"templates/merge_requests_table.gohtml",
 			"templates/scripts.gohtml",
@@ -132,7 +134,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := getDashboardData(startDateParam, endDateParam, tickets)
+	data, err := getDashboardData(startDateParam, endDateParam, tickets)
 
 	// Rellenar la plantilla con los datos y escribir la respuesta HTTP
 	err = tmpl.Execute(w, data)
@@ -143,9 +145,9 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getDashboardData(startDate string, endDate string, tickets string) *DashboardData {
+func getDashboardData(startDate string, endDate string, tickets string) (*DashboardData, error) {
 	if startDate == "" || endDate == "" || tickets == "" {
-		return &DashboardData{}
+		return &DashboardData{}, errors.New("No params were sets")
 	}
 
 	result := &DashboardData{
@@ -170,11 +172,7 @@ func getDashboardData(startDate string, endDate string, tickets string) *Dashboa
 	for _, ticketId := range ticketsSlice {
 		ticketIdStr := strings.ReplaceAll(ticketId, "#", "")
 		ticketIdStr = strings.ReplaceAll(ticketIdStr, " ", "")
-		ticketMetrics, err := getTaskMetrics(ctx, ticketIdStr)
-		if err != nil {
-			log.Println("Error in getDashboardData: ", err)
-			continue
-		}
+		ticketMetrics, _ := getTaskMetrics(ctx, ticketIdStr)
 		result.AvgLeadTime = result.AvgLeadTime + ticketMetrics.LeadTime
 		result.AvgCycleTime = result.AvgCycleTime + ticketMetrics.CycleTime
 		result.AvgBlockedTime = result.AvgBlockedTime + ticketMetrics.BlockedTime
@@ -236,7 +234,7 @@ func getDashboardData(startDate string, endDate string, tickets string) *Dashboa
 		result.MergeRequestSize = appendMergeRequestSizeChartData(result.MergeRequestSize, mr)
 	}
 
-	return result
+	return result, nil
 }
 func initMergeRequestSizeChartData() ChartData {
 	return ChartData{

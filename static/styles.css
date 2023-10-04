@@ -287,3 +287,16 @@ footer {
     transform: rotate(360deg);
   }
 }
+
+.no-data-section {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-data-section p {
+  font-size: 24px;
+  text-align: center;
+  color: #7a7a7a;
+}
