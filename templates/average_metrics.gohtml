@@ -1,7 +1,7 @@
 {{define "average_metrics"}}
 <div class="pb-4 row align-items-center">
     <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+        <div class="card text-center shadow-sm custom-card">
             <div class="card-body">
                 <h5 class="card-title">Lead Time</h5>
                 <p class="card-text">{{.AvgLeadTime}} días</p>
@@ -10,7 +10,7 @@
     </div>
 
     <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+        <div class="card text-center shadow-sm custom-card">
             <div class="card-body">
                 <h5 class="card-title">Cycle Time</h5>
                 <p class="card-text">{{.AvgCycleTime}} días</p>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+        <div class="card text-center shadow-sm custom-card">
             <div class="card-body">
                 <h5 class="card-title">Blocked Time</h5>
                 <p class="card-text">{{.AvgBlockedTime}} días</p>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="col-md-3">
-        <div class="card text-center shadow-sm">
+        <div class="card text-center shadow-sm custom-card">
             <div class="card-body">
                 <h5 class="card-title">Flow Efficiency (Dev)</h5>
                 <p class="card-text">{{printf "%.2f" .AvgFlowEfficiency}}%</p>

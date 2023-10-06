@@ -1,63 +1,43 @@
 {{define "scripts"}}
 <script>
-    function calculate() {
-        // Get references to the button and spinner elements
-        var calculateBtn = document.getElementById("calculateBtn");
-        var calculateText = document.getElementById("calculateText");
-        var spinner = document.getElementById("spinner");
+    function calculate(button) {
+        button.disabled = true;
+        button.querySelector('#calculateText').style.display = "none";
+        button.querySelector('#spinner').style.display = "inline-block";
 
-        // Show the spinner and hide the button text
-        spinner.style.display = "inline-block";
-        calculateText.style.display = "none";
+        /* // Get the selected dates
+         let startDate = document.getElementById("startDate").value;
+         let endDate = document.getElementById("endDate").value;
+ 
+         // Get the content of the textarea
+         let tickets = document.getElementById("textArea").value;
+ 
+         // Get the prefeix
+         let prefix = document.getElementById("prefix").value;
+ 
+         // Construct the new URL with the selected dates as query parameters
+         let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&prefix=' + prefix + '&tickets=' + encodeURIComponent(tickets);
+ 
+         // Redirect the user to the new URL after a slight delay to show the spinner
+         setTimeout(function () {
+             window.location.href = newURL;
+         }, 500);*/
 
-        // Get the selected dates
-        let startDate = document.getElementById("startDate").value;
-        let endDate = document.getElementById("endDate").value;
-
-        // Get the content of the textarea
-        let tickets = document.getElementById("textArea").value;
-
-        // Get the prefeix
-        let prefix = document.getElementById("prefix").value;
-
-        // Construct the new URL with the selected dates as query parameters
-        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&prefix=' + prefix + '&tickets=' + encodeURIComponent(tickets);
-
-        // Redirect the user to the new URL after a slight delay to show the spinner
         setTimeout(function () {
-            window.location.href = newURL;
-        }, 500); // You can adjust the delay time as needed
+            stopLoading(button); // Llama a la función para detener la carga después de un tiempo
+        }, 3000);
+    }
+
+    function stopLoading(button) {
+        button.disabled = false;
+        button.querySelector('#calculateText').style.display = "inline-block";
+        button.querySelector('#spinner').style.display = "none";
     }
 </script>
 <script>
-    var openModalBtn = document.getElementById("openModalBtn");
-    var closeModalBtn = document.getElementById("closeModalBtn");
-    var modal = document.getElementById("myModal");
-
-    // Add a click event to the button to open the modal
-    openModalBtn.addEventListener("click", function () {
-        modal.style.display = "flex";
-    });
-
-    // Add a click event to the button to close the modal
-    closeModalBtn.addEventListener("click", function () {
-        modal.style.display = "none";
-    });
-
-    // Close the modal if the user clicks outside of it
-    window.addEventListener("click", function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    });
-
-    // Add a click event to the "Save" button
-    saveTokenBtn.addEventListener("click", function () {
+    function setClickupToken() {
         // Get the value of the tokenInput field
         var token = document.getElementById("tokenInput").value;
-
-        // Close the modal
-        modal.style.display = "none";
 
         // Make an HTTP POST request with the token data
         fetch('/token', {
@@ -73,7 +53,28 @@
             .catch(error => {
                 // Handle any errors that occur during the request
             });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#ticketsTab").click(function () {
+            $("#ticketsTab").addClass("active");
+            $("#mergeRequestsTab").removeClass("active");
+
+            $("#ticketsContent").show();
+            $("#mergeRequestsContent").hide();
+        });
+
+        $("#mergeRequestsTab").click(function () {
+            $("#mergeRequestsTab").addClass("active");
+            $("#ticketsTab").removeClass("active");
+
+            $("#ticketsContent").hide();
+            $("#mergeRequestsContent").show();
+        });
     });
+
 </script>
 
 

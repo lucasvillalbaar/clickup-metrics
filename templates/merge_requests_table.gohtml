@@ -1,5 +1,5 @@
 {{define "merge_requests_table"}}
-<table class="table table-sm table-hover">
+<table class="table table-sm table-hover custom-small-font">
     <thead class="table-light">
         <tr>
             <th class="text-center">ID</th>
@@ -15,8 +15,8 @@
         <tr>
             <td class="text-center"><a href="{{.WebUrl}}" target="_blank">{{.IID}}</a></td>
             <td>{{.Title}}</td>
-            <td class="text-center fulldate-col">{{.CreatedAt}}</td>
-            <td class="text-center fulldate-col">{{.MergedAt}}</td>
+            <td class="text-center date-col">{{.CreatedAt}}</td>
+            <td class="text-center date-col">{{.MergedAt}}</td>
             <td class="text-center">{{.TimeToMerge}}</td>
             <td class="text-center">{{.Size}}</td>
         </tr>

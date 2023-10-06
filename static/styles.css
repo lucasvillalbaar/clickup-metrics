@@ -24,3 +24,26 @@ body {
   background-color: #bbce00;
   color: white;
 }
+
+.card.custom-card{
+  background-color: #0c1b34;
+  color: white;
+}
+
+.table-sm.custom-small-font{
+  font-size: 13px;
+}
+
+.nav-link.custom-tab {
+  font-size: 16px; 
+  color: #0c1b34; 
+}
+
+.nav-link.custom-tab.active {
+  color: #0c1b34; 
+  font-weight: bold;
+}
+
+.nav-link.custom-tab:hover {
+  color: #bbce00;
+}
