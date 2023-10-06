@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -99,7 +98,6 @@ func getTaskMetricsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
-
 	// Extract query parameters from the request
 	startDateParam := r.URL.Query().Get("start_date")
 	endDateParam := r.URL.Query().Get("end_date")
@@ -146,16 +144,9 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getDashboardData(startDate string, endDate string, tickets string) (*DashboardData, error) {
-	if startDate == "" || endDate == "" || tickets == "" {
-		return &DashboardData{}, errors.New("No params were sets")
-	}
-
-	result := &DashboardData{
-		StartDate:             startDate,
-		EndDate:               endDate,
-		Tickets:               tickets,
-		IsClickupTokenExpired: false,
+func getClickUpData(result *DashboardData, tickets string) {
+	if tickets == "" {
+		return
 	}
 
 	token := os.Getenv("CLICKUP_TOKEN")
@@ -235,7 +226,12 @@ func getDashboardData(startDate string, endDate string, tickets string) (*Dashbo
 		Data:       flowEfficiencyDataSlice,
 		Labels:     flowEfficiencyLabalsSlice,
 	}
+}
 
+func getGitLabData(result *DashboardData, startDate string, endDate string) {
+	if startDate == "" || endDate == "" {
+		return
+	}
 	gitlabToken := os.Getenv("GITLAB_TOKEN")
 	mrsCli := mergerequests.NewGitlabClient("5908940", "CORE", gitlabToken)
 	mrsSlice, _ := mrsCli.GetMergeRequestsMergedBetween(startDate, endDate)
@@ -248,9 +244,23 @@ func getDashboardData(startDate string, endDate string, tickets string) (*Dashbo
 		result.MergeRequestTimeToMerge = appendMergeRequestTimeToMergeChartData(result.MergeRequestTimeToMerge, mr)
 		result.MergeRequestSize = appendMergeRequestSizeChartData(result.MergeRequestSize, mr)
 	}
+}
+
+func getDashboardData(startDate string, endDate string, tickets string) (*DashboardData, error) {
+	result := &DashboardData{
+		StartDate:             startDate,
+		EndDate:               endDate,
+		Tickets:               tickets,
+		IsClickupTokenExpired: false,
+	}
+
+	getClickUpData(result, tickets)
+
+	getGitLabData(result, startDate, endDate)
 
 	return result, nil
 }
+
 func initMergeRequestSizeChartData() ChartData {
 	return ChartData{
 		ChartID:    "merge-request-size-chart",
@@ -271,36 +281,37 @@ func initMergeRequestTimeToMergeChartData() ChartData {
 
 func appendMergeRequestSizeChartData(size ChartData, mr mergerequests.MergeRequest) ChartData {
 	var index int
-	if mr.Size <= 50 {
+
+	switch {
+	case mr.Size <= 50:
 		index = 0
-	} else if mr.Size >= 51 && mr.Size <= 200 {
+	case mr.Size >= 51 && mr.Size <= 200:
 		index = 1
-	} else if mr.Size >= 201 && mr.Size <= 500 {
+	case mr.Size >= 201 && mr.Size <= 500:
 		index = 2
-	} else if mr.Size >= 501 {
+	default:
 		index = 3
 	}
 
-	size.Data[index] = size.Data[index] + 1
+	size.Data[index]++
 
 	return size
 }
 
-func appendMergeRequestTimeToMergeChartData(timeToMarge ChartData, mr mergerequests.MergeRequest) ChartData {
+func appendMergeRequestTimeToMergeChartData(timeToMerge ChartData, mr mergerequests.MergeRequest) ChartData {
 	const MoreThan7Days = 7
 	days := mr.TimeToMerge
 
-	if days < 0 {
-		return timeToMarge
+	switch {
+	case days < 0:
+		return timeToMerge
+	case days >= 7:
+		timeToMerge.Data[MoreThan7Days]++
+	default:
+		timeToMerge.Data[days]++
 	}
 
-	if days >= 7 {
-		timeToMarge.Data[MoreThan7Days] = timeToMarge.Data[MoreThan7Days] + 1
-		return timeToMarge
-	}
-
-	timeToMarge.Data[days] = timeToMarge.Data[days] + 1
-	return timeToMarge
+	return timeToMerge
 }
 
 func toJson(v interface{}) (string, error) {
