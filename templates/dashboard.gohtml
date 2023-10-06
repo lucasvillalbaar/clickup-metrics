@@ -11,27 +11,37 @@
     <div class="header-section">
         <div class="container">
             <h1>MÉTRICAS KANBAN</h1>
-            <button id="openModalBtn" class="button-secondary">Configurar Token Clickup</button>
         </div>
-        <div class="text-input-block">
-            <label for="textArea">Tickets a analizar</label>
-            <br>
-            <textarea id="textArea" name="textArea" rows="2"
-                placeholder="#85aaaaaa, #85bbbbbb, #85cccccc...">{{.Tickets}}</textarea>
+        <div class="parameters">
+            <div class="tickets-params">
+                <div class="text-input-block">
+                    <label for="textArea">Tickets a analizar</label>
+                    <br>
+                    <textarea id="textArea" name="textArea" rows="2"
+                        placeholder="#85aaaaaa, #85bbbbbb, #85cccccc...">{{.Tickets}}</textarea>
+                </div>
+                <button id="openModalBtn" class="button-secondary">Configurar Token Clickup</button>
+            </div>
+            <div class="merge-requests-params">
+                <div class="date-selector-block">
+                    <p>Rango de fechas para MRs</p>
+                    <label for="startDate">Desde</label>
+                    <input type="date" id="startDate" name="startDate" value="{{.StartDate}}">
+
+                    <label for="endDate">a</label>
+                    <input type="date" id="endDate" name="endDate" value="{{.EndDate}}">
+                    <br>
+                    <div class="prefix-input">
+                        <label for="prefix">Prefijo</label>
+                        <input type="text" id="prefix" name="prefix" placeholder="CORE o PRGA" value="{{.Prefix}}">
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="date-selector-block">
-            <label for="startDate">Desde</label>
-            <input type="date" id="startDate" name="startDate" value="{{.StartDate}}">
-
-            <label for="endDate">Hasta</label>
-            <input type="date" id="endDate" name="endDate" value="{{.EndDate}}">
-
-            <button id="calculateBtn" onclick="calculate()">
-                <span id="calculateText">Calcular</span>
-                <span id="spinner" class="spinner" style="display: none;"></span>
-            </button>
-        </div>
+        <button id="calculateBtn" onclick="calculate()">
+            <span id="calculateText">Calcular</span>
+            <span id="spinner" class="spinner" style="display: none;"></span>
+        </button>
     </div>
     <!-- Modal -->
     <div id="myModal" class="modal" style="display: none;">
@@ -48,36 +58,36 @@
     <div class="dashboard-data">
         <h2>TICKETS ANALIZADOS</h2>
         {{if .IsClickupTokenExpired}}
-            {{template "no_data" "Token de Clickup expirado o no configurado" }}
+        {{template "no_data" "Token de Clickup expirado o no configurado" }}
         {{else if eq (len .TaskMetrics) 0}}
-            {{template "no_data" "No hay datos para los tickets ingresados" }}
+        {{template "no_data" "No hay datos para los tickets ingresados" }}
         {{else}}
-            {{template "tickets_table" . }}
+        {{template "tickets_table" . }}
 
-            {{template "average_metrics" . }}
+        {{template "average_metrics" . }}
 
-            <div class="charts-block">
-                {{template "line_chart" .LeadTimeData}}
+        <div class="charts-block">
+            {{template "line_chart" .LeadTimeData}}
 
-                {{template "line_chart" .CycleTimeData}}
+            {{template "line_chart" .CycleTimeData}}
 
-                {{template "line_chart" .BlockedTimeData}}
+            {{template "line_chart" .BlockedTimeData}}
 
-                {{template "line_chart" .FlowEfficiencyData}}
-            </div>
+            {{template "line_chart" .FlowEfficiencyData}}
+        </div>
 
         {{end}}
         <h2>MERGE REQUESTS</h2>
         {{if eq (len .MergeRequests) 0}}
-            {{template "no_data" "No hay MRs en el rango de fechas especificado" }}
+        {{template "no_data" "No hay MRs en el rango de fechas especificado" }}
         {{else}}
-            {{template "merge_requests_table" . }}
-        
-            <div class="charts-block">
-                {{template "bar_chart" .MergeRequestTimeToMerge}}
+        {{template "merge_requests_table" . }}
 
-                {{template "bar_chart" .MergeRequestSize}}
-            </div>
+        <div class="charts-block">
+            {{template "bar_chart" .MergeRequestTimeToMerge}}
+
+            {{template "bar_chart" .MergeRequestSize}}
+        </div>
 
         {{end}}
 
@@ -85,7 +95,4 @@
     </div>
 
 </body>
-
-{{template "footer"}}
-
 </html>

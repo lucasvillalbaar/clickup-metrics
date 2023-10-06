@@ -17,8 +17,11 @@
         // Get the content of the textarea
         let tickets = document.getElementById("textArea").value;
 
+        // Get the prefeix
+        let prefix = document.getElementById("prefix").value;
+
         // Construct the new URL with the selected dates as query parameters
-        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&tickets=' + encodeURIComponent(tickets);
+        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&prefix=' + prefix + '&tickets=' + encodeURIComponent(tickets);
 
         // Redirect the user to the new URL after a slight delay to show the spinner
         setTimeout(function () {

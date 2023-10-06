@@ -25,6 +25,7 @@ type ChartData struct {
 type DashboardData struct {
 	StartDate               string
 	EndDate                 string
+	Prefix                  string
 	Tickets                 string
 	AvgLeadTime             int
 	AvgCycleTime            int
@@ -102,6 +103,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 	startDateParam := r.URL.Query().Get("start_date")
 	endDateParam := r.URL.Query().Get("end_date")
 	ticketsParam := r.URL.Query().Get("tickets")
+	prefixParam := r.URL.Query().Get("prefix")
 
 	tickets, err := url.QueryUnescape(ticketsParam)
 	if err != nil {
@@ -124,8 +126,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 			"templates/no_data.gohtml",
 			"templates/tickets_table.gohtml",
 			"templates/merge_requests_table.gohtml",
-			"templates/scripts.gohtml",
-			"templates/footer.gohtml")
+			"templates/scripts.gohtml")
 
 	if err != nil {
 		log.Println("Error when reading template: ", err)
@@ -133,7 +134,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := getDashboardData(startDateParam, endDateParam, tickets)
+	data, err := getDashboardData(startDateParam, endDateParam, prefixParam, tickets)
 
 	// Rellenar la plantilla con los datos y escribir la respuesta HTTP
 	err = tmpl.Execute(w, data)
@@ -228,12 +229,12 @@ func getClickUpData(result *DashboardData, tickets string) {
 	}
 }
 
-func getGitLabData(result *DashboardData, startDate string, endDate string) {
+func getGitLabData(result *DashboardData, startDate string, endDate string, prefix string) {
 	if startDate == "" || endDate == "" {
 		return
 	}
 	gitlabToken := os.Getenv("GITLAB_TOKEN")
-	mrsCli := mergerequests.NewGitlabClient("5908940", "CORE", gitlabToken)
+	mrsCli := mergerequests.NewGitlabClient("5908940", prefix, gitlabToken)
 	mrsSlice, _ := mrsCli.GetMergeRequestsMergedBetween(startDate, endDate)
 
 	result.MergeRequests = mrsSlice
@@ -246,17 +247,18 @@ func getGitLabData(result *DashboardData, startDate string, endDate string) {
 	}
 }
 
-func getDashboardData(startDate string, endDate string, tickets string) (*DashboardData, error) {
+func getDashboardData(startDate string, endDate string, prefix string, tickets string) (*DashboardData, error) {
 	result := &DashboardData{
 		StartDate:             startDate,
 		EndDate:               endDate,
 		Tickets:               tickets,
+		Prefix:                prefix,
 		IsClickupTokenExpired: false,
 	}
 
 	getClickUpData(result, tickets)
 
-	getGitLabData(result, startDate, endDate)
+	getGitLabData(result, startDate, endDate, prefix)
 
 	return result, nil
 }

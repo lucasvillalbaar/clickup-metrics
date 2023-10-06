@@ -1,20 +1,62 @@
 body {
-  font-family: Arial, sans-serif;
-  max-width: 1200px;
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0 auto; /* Remove default margin from the body */
-  padding: 0; /* Remove default padding from the body */
   margin-bottom: 100px; /* Add a bottom margin of 100px */
 }
 
 .header-section {
   position: fixed;
-  width: 1200px;
-  background-color: #ffffff; /* You can adjust the background color as needed */
-  z-index: 900; /* Ensure it appears above other content */
+  width: 100%;
+  padding: 20px;
+  background-color: #f7f6f6;
+  z-index: 900;
 }
 
+.container {
+ flex:1;
+}
+
+.parameters {
+  display: flex;
+  gap: 40px;
+  align-items: baseline;
+}
+
+.tickets-params,
+.merge-requests-params {
+  flex: 1;
+  max-width: calc(50% - 20px); /* 50% width with 20px spacing between */
+}
+
+@media (max-width: 900px) {
+  .parameters {
+    flex-direction: column; /* Stack on small screens */
+  }
+
+  .tickets-params,
+  .merge-requests-params {
+    max-width: 100%; /* Full width on small screens */
+  }
+}
+
+.prefix-input{
+  margin-top: 20px;
+}
+
+.prefix-input input {
+  border: 1px solid #0c1b34;
+  border-radius: 5px; /* Rounded corners for the block */
+  padding: 5px;
+}
+
+
+#calculateBtn{
+  margin-top: 20px;
+}
 .dashboard-data {
-  padding-top: 270px;
+  padding-top: 400px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 /* Center the content horizontally */
@@ -61,7 +103,7 @@ td.centered {
 /* Style for H1 elements */
 h1,
 h2 {
-  color: #bbce00;
+  color: #0c1b34;
 }
 
 /* Add margin to the block containing date selectors and the button */
@@ -69,46 +111,55 @@ h2 {
   margin: 20px 0; /* Add margin top and bottom */
 }
 
+.date-selector-block p{
+  text-transform: uppercase;
+  display: block;
+  font-weight: bold;
+  color: #0c1b34;
+}
+
 /* Style for the "Calculate" button */
 button {
-  background-color: #bbce00;
+  background-color: #0c1b34;
   color: white;
   padding: 10px 20px; /* Add padding to make the button more clickable */
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease; /* Add a smooth transition for hover effect */
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 /* Change background color on hover */
 button:hover {
-  background-color: #0c1b34;
+  background-color: #bbce00;
 }
 
 /* Style for the "Calculate" button */
 .button-secondary {
-  background-color: #0c1b34;
-  color: white;
+  background-color: white;
+  color: #0c1b34;
   padding: 10px 20px; /* Add padding to make the button more clickable */
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease; /* Add a smooth transition for hover effect */
-  border-radius: 10px;
+  border-radius: 5px;
+  border: 1px solid #0c1b34;
+  border-color: #0c1b34;
 }
 
 /* Change background color on hover */
 .button-secondary:hover {
-  background-color: white;
-  color: #0c1b34;
-  border: 1px solid #0c1b34;
-  border-color: #0c1b34;
+  background-color: #bbce00;
+  color: white;
+  border: 1px solid #bbce00;
+  border-color: #bbce00;
 }
 
 /* Style for date input elements */
 input[type="date"] {
   font-family: Arial, sans-serif; /* Set the font to Arial */
   padding: 5px; /* Add padding to the input elements */
-  border-radius: 10px;
+  border-radius: 5px;
   border: 1px solid #0c1b34; /* Add a 1px solid border with color */
 }
 
@@ -120,7 +171,7 @@ input[type="date"] {
   padding: 10px; /* Inner spacing for the block */
   color: white; /* Font color for the entire block */
   margin-bottom: 20px;
-  border-radius: 10px; /* Rounded corners for the block */
+  border-radius: 5px; /* Rounded corners for the block */
 }
 
 /* Styles for the metrics blocks */
@@ -157,24 +208,6 @@ input[type="date"] {
   overflow: hidden;
 }
 
-/* Footer Styles */
-footer {
-  background-color: #0c1b34;
-  color: white;
-  margin-top: 20px;
-  padding: 5px 10px;
-  border-radius: 10px; /* Rounded corners for the block */
-  position: fixed;
-  bottom: 0;
-  width: 1200px;
-}
-
-/* Footer Content Styles */
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .text-input-block {
   margin-bottom: 20px;
 }
@@ -183,7 +216,7 @@ footer {
   text-transform: uppercase;
   display: block;
   font-weight: bold;
-  color: #bbce00;
+  color: #0c1b34;
 }
 
 .text-input-block textarea {
@@ -191,7 +224,7 @@ footer {
   width: 430px;
   resize: vertical;
   border-color: #0c1b34;
-  border-radius: 10px; /* Rounded corners for the block */
+  border-radius: 5px; /* Rounded corners for the block */
   padding: 10px;
 }
 /* Style for the modal background */
@@ -253,14 +286,14 @@ footer {
   text-transform: uppercase;
   display: block;
   font-weight: bold;
-  color: #bbce00;
+  color: #0c1b34;
 }
 
 .modal-content input {
   font-family: Arial, Helvetica, sans-serif;
   width: 80%;
   border-color: #0c1b34;
-  border-radius: 10px; /* Rounded corners for the block */
+  border-radius: 5px; /* Rounded corners for the block */
   padding: 10px;
 }
 
