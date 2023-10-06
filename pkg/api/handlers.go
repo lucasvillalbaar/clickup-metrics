@@ -31,6 +31,7 @@ type DashboardData struct {
 	AvgCycleTime            int
 	AvgBlockedTime          int
 	AvgFlowEfficiency       float64
+	IsClickupTokenExpired   bool
 	TaskMetrics             []TaskMetricsResponse
 	LeadTimeData            ChartData
 	CycleTimeData           ChartData
@@ -151,12 +152,16 @@ func getDashboardData(startDate string, endDate string, tickets string) (*Dashbo
 	}
 
 	result := &DashboardData{
-		StartDate: startDate,
-		EndDate:   endDate,
-		Tickets:   tickets,
+		StartDate:             startDate,
+		EndDate:               endDate,
+		Tickets:               tickets,
+		IsClickupTokenExpired: false,
 	}
 
 	token := os.Getenv("CLICKUP_TOKEN")
+	if token == "" {
+		result.IsClickupTokenExpired = true
+	}
 	ctx := context.WithValue(context.TODO(), ContextClickUpToken, "Bearer "+token)
 
 	ticketsSlice := strings.Split(tickets, ",")
@@ -170,9 +175,19 @@ func getDashboardData(startDate string, endDate string, tickets string) (*Dashbo
 	flowEfficiencyLabalsSlice := []string{}
 
 	for _, ticketId := range ticketsSlice {
+		if result.IsClickupTokenExpired == true {
+			continue
+		}
 		ticketIdStr := strings.ReplaceAll(ticketId, "#", "")
 		ticketIdStr = strings.ReplaceAll(ticketIdStr, " ", "")
-		ticketMetrics, _ := getTaskMetrics(ctx, ticketIdStr)
+		ticketMetrics, err := getTaskMetrics(ctx, ticketIdStr)
+		if err != nil {
+			if err.Error() == "api key is expired or is not valid" || err.Error() == "token is expired" {
+				result.IsClickupTokenExpired = true
+			}
+			log.Println(err)
+			continue
+		}
 		result.AvgLeadTime = result.AvgLeadTime + ticketMetrics.LeadTime
 		result.AvgCycleTime = result.AvgCycleTime + ticketMetrics.CycleTime
 		result.AvgBlockedTime = result.AvgBlockedTime + ticketMetrics.BlockedTime

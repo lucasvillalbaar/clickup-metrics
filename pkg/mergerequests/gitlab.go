@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
 const (
-	GitlabURLGetMergeRequests       = "https://gitlab.com/api/v4/groups/%s/merge_requests?scope=all&updated_after=%sT00:00:00Z&updated_before=%sT23:59:59Z&search=%s&in=title&state=merged"
+	GitlabURLGetMergeRequests       = "https://gitlab.com/api/v4/groups/%s/merge_requests?scope=all&created_after=%sT00:00:00.000Z&created_before=%sT23:59:59.999Z&search=%s&in=title&state=merged"
 	GitlabURLGetMergeRequestChanges = "https://gitlab.com/api/v4/projects/%d/merge_requests/%d/changes"
 )
 
@@ -71,14 +73,39 @@ func (c *GitlabClient) GetMergeRequestsMergedBetween(startDate string, endDate s
 		return nil, err
 	}
 
-	for index, mr := range mergeRequests {
-		change, _ := c.GetMergeRequestChanges(mr.ProjectID, mr.IID)
-		mergeRequests[index].Size = calculateNetChangesSize(change)
-		mergeRequests[index].TimeToMerge = getTimeToMerge(&mr)
-		mergeRequests[index].CreatedAt = formatDate(mergeRequests[index].CreatedAt)
-		mergeRequests[index].MergedAt = formatDate(mergeRequests[index].MergedAt)
+	var result []MergeRequest
+	var wg sync.WaitGroup
+
+	for _, mr := range mergeRequests {
+		mrCopy := mr
+		wg.Add(1)
+		go func(mr MergeRequest) {
+			defer wg.Done()
+
+			change, _ := c.GetMergeRequestChanges(mr.ProjectID, mr.IID)
+			result = append(result, MergeRequest{
+				ID:          mr.ID,
+				IID:         mr.IID,
+				ProjectID:   mr.ProjectID,
+				Title:       mr.Title,
+				Size:        calculateNetChangesSize(change),
+				TimeToMerge: getTimeToMerge(&mr),
+				CreatedAt:   formatDate(mr.CreatedAt),
+				MergedAt:    formatDate(mr.MergedAt),
+			})
+		}(mrCopy)
 	}
-	return mergeRequests, nil
+	wg.Wait()
+	sortByCreatedAt(result)
+	return result, nil
+}
+
+// sortByCreatedAt sorts a slice of MergeRequest structs by their CreatedAt dates in ascending order.
+// It takes a slice of MergeRequest structs as input and sorts it in-place.
+func sortByCreatedAt(mrs []MergeRequest) {
+	sort.Slice(mrs, func(i, j int) bool {
+		return mrs[j].CreatedAt > mrs[i].CreatedAt
+	})
 }
 
 func (c *GitlabClient) GetMergeRequestChanges(projectID int, iid int) (MergeRequestChange, error) {

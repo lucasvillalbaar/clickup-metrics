@@ -47,9 +47,13 @@
 
     <div class="dashboard-data">
         <h2>TICKETS ANALIZADOS</h2>
-        {{if eq (len .TaskMetrics) 0}}
+        {{if .IsClickupTokenExpired}}
+            {{template "no_data" "Token de Clickup expirado o no configurado" }}
+        {{else if eq (len .TaskMetrics) 0}}
             {{template "no_data" "No hay datos para los tickets ingresados" }}
         {{else}}
+            {{template "tickets_table" . }}
+
             {{template "average_metrics" . }}
 
             <div class="charts-block">
@@ -60,19 +64,21 @@
                 {{template "line_chart" .BlockedTimeData}}
 
                 {{template "line_chart" .FlowEfficiencyData}}
+            </div>
 
+        {{end}}
+        <h2>MERGE REQUESTS</h2>
+        {{if eq (len .MergeRequests) 0}}
+            {{template "no_data" "No hay MRs en el rango de fechas especificado" }}
+        {{else}}
+            {{template "merge_requests_table" . }}
+        
+            <div class="charts-block">
                 {{template "bar_chart" .MergeRequestTimeToMerge}}
 
                 {{template "bar_chart" .MergeRequestSize}}
             </div>
 
-            {{template "tickets_table" . }}
-        {{end}}
-        <h2>MERGE REQUESTS</h2>
-        {{if eq (len .MergeRequests) 0}}
-            {{template "no_data" "No hay MRs en el rango de fechas seleccionado" }}
-        {{else}}
-            {{template "merge_requests_table" . }}
         {{end}}
 
         {{template "scripts"}}
