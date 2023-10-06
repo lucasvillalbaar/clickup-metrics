@@ -31,6 +31,12 @@ WORKDIR /app
 # Copy the built Go binary from the previous stage
 COPY --from=build /build/cmd/metrics/main .
 
+# Copy the static folder into the container
+COPY static static
+
+# Copy the templates folder into the container
+COPY templates templates
+
 # Expose the port that the microservice listens on
 EXPOSE 8080
 
