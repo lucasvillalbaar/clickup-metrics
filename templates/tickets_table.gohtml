@@ -1,30 +1,30 @@
 {{define "tickets_table"}}
-<table border="1">
-    <thead>
+<table class="table table-sm table-hover">
+    <thead class="table-light">
         <tr>
-            <th>ID</th>
-            <th>Custom ID</th>
+            <th class="text-center">ID</th>
+            <th class="text-center">Custom ID</th>
             <th>Nombre</th>
-            <th>Inicio</th>
-            <th>Fin</th>
-            <th>Lead Time</th>
-            <th>Cycle Time</th>
-            <th>Blocked Time</th>
-            <th>Flow Efficiency</th>
+            <th class="text-center">Inicio</th>
+            <th class="text-center">Fin</th>
+            <th class="text-center">Lead Time</th>
+            <th class="text-center">Cycle Time</th>
+            <th class="text-center">Blocked Time</th>
+            <th class="text-center">Flow Efficiency</th>
         </tr>
     </thead>
     {{range .TaskMetrics}}
     <tbody>
         <tr>
-            <td class="centered">{{.Id}}</td>
-            <td class="centered">{{.CustomId}}</td>
+            <td class="text-center">{{.Id}}</td>
+            <td class="text-center">{{.CustomId}}</td>
             <td>{{.Name}}</td>
-            <td class="centered date-col">{{.StartDate}}</td>
-            <td class="centered date-col">{{.DueDate}}</td>
-            <td class="centered">{{.LeadTime}}</td>
-            <td class="centered">{{.CycleTime}}</td>
-            <td class="centered">{{.BlockedTime}}</td>
-            <td class="centered">
+            <td class="text-center date-col">{{.StartDate}}</td>
+            <td class="text-center date-col">{{.DueDate}}</td>
+            <td class="text-center">{{.LeadTime}}</td>
+            <td class="text-center">{{.CycleTime}}</td>
+            <td class="text-center">{{.BlockedTime}}</td>
+            <td class="text-center">
                 <p>{{printf "%.2f" .FlowEfficiency}}%</p>
             </td>
         </tr>

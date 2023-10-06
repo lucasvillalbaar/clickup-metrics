@@ -1,24 +1,24 @@
 {{define "merge_requests_table"}}
-<table border="1">
-    <thead>
+<table class="table table-sm table-hover">
+    <thead class="table-light">
         <tr>
-            <th>ID</th>
-            <th>Titulo</th>
-            <th>Creado</th>
-            <th>Mergeado</th>
-            <th>Tiempo</th>
-            <th>Tamaño</th>
+            <th class="text-center">ID</th>
+            <th>Título</th>
+            <th class="text-center">Creado</th>
+            <th class="text-center">Mergeado</th>
+            <th class="text-center">Tiempo</th>
+            <th class="text-center">Tamaño</th>
         </tr>
     </thead>
     {{range .MergeRequests}}
     <tbody>
         <tr>
-            <td class="centered"><a href="{{.WebUrl}}" target="_blank">{{.IID}}</a></td>
+            <td class="text-center"><a href="{{.WebUrl}}" target="_blank">{{.IID}}</a></td>
             <td>{{.Title}}</td>
-            <td class="centered fulldate-col">{{.CreatedAt}}</td>
-            <td class="centered fulldate-col">{{.MergedAt}}</td>
-            <td class="centered">{{.TimeToMerge}}</td>
-            <td class="centered">{{.Size}}</td>
+            <td class="text-center fulldate-col">{{.CreatedAt}}</td>
+            <td class="text-center fulldate-col">{{.MergedAt}}</td>
+            <td class="text-center">{{.TimeToMerge}}</td>
+            <td class="text-center">{{.Size}}</td>
         </tr>
     </tbody>
     {{end}}

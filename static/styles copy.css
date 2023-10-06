@@ -1,0 +1,336 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0 auto; /* Remove default margin from the body */
+  margin-bottom: 100px; /* Add a bottom margin of 100px */
+}
+
+.header-section {
+  position: fixed;
+  width: 100%;
+  padding: 20px;
+  background-color: #f7f6f6;
+  z-index: 900;
+}
+
+.container {
+ flex:1;
+}
+
+.parameters {
+  display: flex;
+  gap: 40px;
+  align-items: baseline;
+}
+
+.tickets-params,
+.merge-requests-params {
+  flex: 1;
+  max-width: calc(50% - 20px); /* 50% width with 20px spacing between */
+}
+
+@media (max-width: 900px) {
+  .parameters {
+    flex-direction: column; /* Stack on small screens */
+  }
+
+  .tickets-params,
+  .merge-requests-params {
+    max-width: 100%; /* Full width on small screens */
+  }
+}
+
+.prefix-input{
+  margin-top: 20px;
+}
+
+.prefix-input input {
+  border: 1px solid #0c1b34;
+  border-radius: 5px; /* Rounded corners for the block */
+  padding: 5px;
+}
+
+
+#calculateBtn{
+  margin-top: 20px;
+}
+.dashboard-data {
+  padding-top: 400px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Center the content horizontally */
+.container {
+  width: 80%; /* Adjust width as per your preference */
+  margin: 0 auto; /* Center the content horizontally within the container */
+}
+
+/* Style for table header */
+th {
+  background-color: #0c1b34;
+  color: white;
+  font-weight: bold;
+  padding: 10px; /* Add space around header content */
+}
+
+/* Style for table border */
+table {
+  border: 2px solid #0c1b34;
+  border-collapse: collapse; /* Collapse adjacent borders into a single line */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+tbody tr {
+  font-size: 13px;
+}
+
+/* Style for table cells in Lead Time, Cycle Time, and Blocked Time columns */
+td.centered {
+  padding: 5px;
+  text-align: center; /* Center the content in these columns */
+}
+
+.date-col {
+  width: 90px;
+}
+
+.fulldate-col {
+  width: 110px;
+}
+
+
+/* Style for H1 elements */
+h1,
+h2 {
+  color: #0c1b34;
+}
+
+/* Add margin to the block containing date selectors and the button */
+.date-selector-block {
+  margin: 20px 0; /* Add margin top and bottom */
+}
+
+.date-selector-block p{
+  text-transform: uppercase;
+  display: block;
+  font-weight: bold;
+  color: #0c1b34;
+}
+
+/* Style for the "Calculate" button */
+button {
+  background-color: #0c1b34;
+  color: white;
+  padding: 10px 20px; /* Add padding to make the button more clickable */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add a smooth transition for hover effect */
+  border-radius: 5px;
+}
+
+/* Change background color on hover */
+button:hover {
+  background-color: #bbce00;
+}
+
+/* Style for the "Calculate" button */
+.button-secondary {
+  background-color: white;
+  color: #0c1b34;
+  padding: 10px 20px; /* Add padding to make the button more clickable */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add a smooth transition for hover effect */
+  border-radius: 5px;
+  border: 1px solid #0c1b34;
+  border-color: #0c1b34;
+}
+
+/* Change background color on hover */
+.button-secondary:hover {
+  background-color: #bbce00;
+  color: white;
+  border: 1px solid #bbce00;
+  border-color: #bbce00;
+}
+
+/* Style for date input elements */
+input[type="date"] {
+  font-family: Arial, sans-serif; /* Set the font to Arial */
+  padding: 5px; /* Add padding to the input elements */
+  border-radius: 5px;
+  border: 1px solid #0c1b34; /* Add a 1px solid border with color */
+}
+
+/* General styles for the metrics block */
+.average-metrics-widget {
+  display: flex; /* Make the blocks align in a row */
+  justify-content: space-between; /* Uniform space between blocks */
+  background-color: #0c1b34; /* Background color for the entire block */
+  padding: 10px; /* Inner spacing for the block */
+  color: white; /* Font color for the entire block */
+  margin-bottom: 20px;
+  border-radius: 5px; /* Rounded corners for the block */
+}
+
+/* Styles for the metrics blocks */
+.metrics-block {
+  text-align: center; /* Center the content of the block */
+  padding: 10px; /* Inner spacing for each block */
+  background-color: #0c1b34; /* Background color for each block */
+}
+
+/* Styles for the titles (h2) inside the metrics blocks */
+.metrics-block h2 {
+  background-color: #0c1b34; /* Background color for titles */
+  color: white; /* Font color for titles */
+  margin: 0; /* Remove top and bottom margin */
+  padding: 5px; /* Inner spacing for titles */
+}
+
+/* Styles for the paragraph (p) inside the metrics blocks */
+.metrics-block p {
+  font-size: 1.5em;
+}
+
+/* Styles for the values (p) inside the metrics blocks */
+.metrics-block p {
+  margin: 0; /* Remove top and bottom margin */
+}
+
+/* Style for line chart widget container */
+.line-chart-widget {
+  width: 100%;
+  padding-bottom: 75%; /* 4:3 aspect ratio (75% = 3/4) */
+  position: relative;
+  height: 0;
+  overflow: hidden;
+}
+
+.text-input-block {
+  margin-bottom: 20px;
+}
+
+.text-input-block label {
+  text-transform: uppercase;
+  display: block;
+  font-weight: bold;
+  color: #0c1b34;
+}
+
+.text-input-block textarea {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 430px;
+  resize: vertical;
+  border-color: #0c1b34;
+  border-radius: 5px; /* Rounded corners for the block */
+  padding: 10px;
+}
+/* Style for the modal background */
+.modal {
+  display: none; /* Hide the modal by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style for the modal content */
+.modal-content {
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  max-width: 400px; /* Adjust the maximum width as needed */
+  width: 100%;
+  text-align: center;
+}
+
+/* Style for the close button */
+.close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+#openModalBtn {
+  margin-left: auto;
+}
+
+.modal-content {
+  text-align: left;
+  padding-left: 45px;
+}
+.modal-content h2 {
+  text-transform: uppercase;
+}
+
+.modal-content label {
+  text-transform: uppercase;
+  display: block;
+  font-weight: bold;
+  color: #0c1b34;
+}
+
+.modal-content input {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 80%;
+  border-color: #0c1b34;
+  border-radius: 5px; /* Rounded corners for the block */
+  padding: 10px;
+}
+
+.modal-content button {
+  margin-top: 20px;
+}
+
+/* Style for the spinner animation */
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3); /* Reduce border width */
+  border-top: 2px solid #0c1b34; /* Reduce border width */
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  animation: spin 1s linear infinite;
+  text-align: center;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.no-data-section {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-data-section p {
+  font-size: 24px;
+  text-align: center;
+  color: #7a7a7a;
+}

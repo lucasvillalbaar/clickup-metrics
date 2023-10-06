@@ -1,23 +1,39 @@
 {{define "average_metrics"}}
-  <div class="average-metrics-widget">
-    <div class="metrics-block">
-      <h2>Lead Time</h2>
-      <p>{{.AvgLeadTime}} días</p>
+<div class="pb-4 row align-items-center">
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Lead Time</h5>
+                <p class="card-text">{{.AvgLeadTime}} días</p>
+            </div>
+        </div>
     </div>
 
-    <div class="metrics-block">
-      <h2>Cycle Time</h2>
-      <p>{{.AvgCycleTime}} días</p>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Cycle Time</h5>
+                <p class="card-text">{{.AvgCycleTime}} días</p>
+            </div>
+        </div>
     </div>
 
-    <div class="metrics-block">
-      <h2>Blocked Time</h2>
-      <p>{{.AvgBlockedTime}} días</p>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Blocked Time</h5>
+                <p class="card-text">{{.AvgBlockedTime}} días</p>
+            </div>
+        </div>
     </div>
 
-    <div class="metrics-block">
-      <h2>Flow Efficiency (Dev)</h2>
-      <p>{{printf "%.2f" .AvgFlowEfficiency}}%</p>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Flow Efficiency (Dev)</h5>
+                <p class="card-text">{{printf "%.2f" .AvgFlowEfficiency}}%</p>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 {{end}}
