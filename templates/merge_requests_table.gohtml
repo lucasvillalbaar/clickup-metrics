@@ -13,7 +13,7 @@
     {{range .MergeRequests}}
     <tbody>
         <tr>
-            <td class="centered">{{.ID}}</td>
+            <td class="centered"><a href="{{.WebUrl}}" target="_blank">{{.IID}}</a></td>
             <td>{{.Title}}</td>
             <td class="centered fulldate-col">{{.CreatedAt}}</td>
             <td class="centered fulldate-col">{{.MergedAt}}</td>

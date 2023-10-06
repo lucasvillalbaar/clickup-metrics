@@ -32,6 +32,7 @@ type MergeRequest struct {
 	MergedAt    string `json:"merged_at"`
 	TimeToMerge int    `json:"time_to_merge"`
 	Size        int    `json:"size"`
+	WebUrl      string `json:"web_url"`
 }
 
 type GitlabClient struct {
@@ -92,6 +93,7 @@ func (c *GitlabClient) GetMergeRequestsMergedBetween(startDate string, endDate s
 				TimeToMerge: getTimeToMerge(&mr),
 				CreatedAt:   formatDate(mr.CreatedAt),
 				MergedAt:    formatDate(mr.MergedAt),
+				WebUrl:      mr.WebUrl,
 			})
 		}(mrCopy)
 	}
