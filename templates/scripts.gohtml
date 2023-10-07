@@ -1,32 +1,72 @@
 {{define "scripts"}}
 <script>
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+
     function calculate(button) {
         button.disabled = true;
         button.querySelector('#calculateText').style.display = "none";
         button.querySelector('#spinner').style.display = "inline-block";
 
-        /* // Get the selected dates
-         let startDate = document.getElementById("startDate").value;
-         let endDate = document.getElementById("endDate").value;
- 
-         // Get the content of the textarea
-         let tickets = document.getElementById("textArea").value;
- 
-         // Get the prefeix
-         let prefix = document.getElementById("prefix").value;
- 
-         // Construct the new URL with the selected dates as query parameters
-         let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&prefix=' + prefix + '&tickets=' + encodeURIComponent(tickets);
- 
-         // Redirect the user to the new URL after a slight delay to show the spinner
-         setTimeout(function () {
-             window.location.href = newURL;
-         }, 500);*/
+        // Get the selected dates
+        let startDate = document.getElementById("startDate").value;
+        let endDate = document.getElementById("endDate").value;
 
-        setTimeout(function () {
-            stopLoading(button); // Llama a la función para detener la carga después de un tiempo
-        }, 3000);
+        $('#startDate').removeClass('is-invalid');
+        $('#endDate').removeClass('is-invalid');
+
+        console.log(startDate);
+        // Check if endDate is less than startDate
+        if (!startDate && endDate) {
+            // Show the popover with the error message
+            $('#startDate').popover('show');
+
+            // Add the "is-invalid" class to the endDate input to indicate the error
+            $('#startDate').addClass('is-invalid');
+
+            // Stop further execution
+            stopLoading(button);
+            return;
+        } else {
+            // Hide the popover if previously shown
+            $('#startDate').popover('hide');
+
+            // Remove the "is-invalid" class to clear the validation state
+            $('#startDate').removeClass('is-invalid');
+        }
+
+        // Check if endDate is less than startDate
+        if (endDate < startDate) {
+            // Show the popover with the error message
+            $('#endDate').popover('show');
+
+            // Add the "is-invalid" class to the endDate input to indicate the error
+            $('#endDate').addClass('is-invalid');
+
+            // Stop further execution
+            stopLoading(button);
+            return;
+        } else {
+            // Hide the popover if previously shown
+            $('#endDate').popover('hide');
+
+            // Remove the "is-invalid" class to clear the validation state
+            $('#endDate').removeClass('is-invalid');
+        }
+        // Get the content of the textarea
+        let tickets = document.getElementById("textArea").value;
+
+        // Get the prefix
+        let prefix = document.getElementById("prefix").value;
+
+        // Construct the new URL with the selected dates as query parameters
+        let newURL = '/dashboard?start_date=' + startDate + '&end_date=' + endDate + '&prefix=' + prefix + '&tickets=' + encodeURIComponent(tickets);
+
+        // Redirect the user to the new URL after a slight delay to show the spinner
+        window.location.href = newURL;
     }
+
 
     function stopLoading(button) {
         button.disabled = false;

@@ -109,10 +109,15 @@
 
         <ul class="nav nav-underline">
             <li class="nav-item">
-                <a class="nav-link custom-tab active" href="#tickets" id="ticketsTab">Tickets analizados</a>
+                <a class="nav-link custom-tab active" href="#tickets" id="ticketsTab">
+                    Tickets analizados{{if gt (len .TaskMetrics) 1}} ({{len .TaskMetrics}}){{end}}
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link custom-tab" href="#merge-requests" id="mergeRequestsTab">Merge Requests</a>
+                <a class="nav-link custom-tab" href="#merge-requests" id="mergeRequestsTab">
+                    Merge Requests{{if gt (len .MergeRequests) 1}} ({{len .MergeRequests}}){{end}}
+                </a>
+
             </li>
         </ul>
         <hr>
