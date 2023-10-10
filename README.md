@@ -4,7 +4,7 @@ This Docker image provides a microservice that exposes an endpoint for retrievin
 
 # Usage
 To run the container, use the following command:
-`docker run -it -p 8080:8080 -e API_KEY={API_KEY} lucasvillalba/software-delivery-metrics:latest `
+`docker run -it -p 8080:8080 -e API_KEY=<your_api_key> -e GITLAB_TOKEN=<your_gitlab_token> lucasvillalba/software-delivery-metrics:latest`
 
 # Endpoint
 The microservice exposes the following endpoint:
