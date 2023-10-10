@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -54,6 +55,7 @@ func Init() *mux.Router {
 	router := mux.NewRouter()
 
 	router.Use(authInterceptor)
+	router.HandleFunc("/healthcheck", getHealthCheck).Methods("GET")
 	router.HandleFunc("/dashboard", getDashboardHandler).Methods("GET")
 	router.HandleFunc("/token", setTokenHandler).Methods("POST")
 
@@ -64,6 +66,20 @@ func Init() *mux.Router {
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticFileServer))
 
 	return router
+}
+
+func getHealthCheck(w http.ResponseWriter, r *http.Request) {
+	// Set content type to JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK) // 200 status
+
+	response := map[string]string{
+		"status":  "OK",
+		"message": "API is running",
+	}
+
+	// Encode and send JSON response
+	json.NewEncoder(w).Encode(response)
 }
 
 // authInterceptor es el interceptor que se ejecutará antes de manejar la solicitud
