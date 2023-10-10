@@ -84,6 +84,7 @@ func getTaskHeaderData(taskId string) (data.TaskHeaderData, error) {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	log.Println("Fetching data from Clickup for ticket:", taskId)
 	if err != nil {
 		return data.TaskHeaderData{}, fmt.Errorf("error performing HTTP request: %v", err)
 	}

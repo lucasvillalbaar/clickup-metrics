@@ -43,6 +43,9 @@ func configureDataSource(ctx context.Context) {
 		log.Fatal("Error loading .env file:", err)
 	}
 	token := ctx.Value(ContextClickUpToken).(string)
+	if token == "" {
+		log.Println("Clickup token has not been configured")
+	}
 	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey, token)
 
 	data.SetDataSource(cli)

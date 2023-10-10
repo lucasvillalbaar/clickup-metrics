@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"sort"
@@ -59,6 +60,7 @@ func (c *GitlabClient) GetMergeRequestsMergedBetween(startDate string, endDate s
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	log.Printf("Fetching data from GitLab from date %s to %s", startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
@@ -126,9 +128,15 @@ func (c *GitlabClient) GetMergeRequestChanges(projectID int, iid int) (MergeRequ
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusNotFound {
-		log.Println("Resource not found")
-		return MergeRequestChange{}, errors.New("Resource not found")
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("Error reading response body:", err)
+			return MergeRequestChange{}, err
+		}
+		bodyString := string(bodyBytes)
+		log.Println(bodyString)
+		return MergeRequestChange{}, errors.New(bodyString)
 	}
 
 	var changes MergeRequestChange

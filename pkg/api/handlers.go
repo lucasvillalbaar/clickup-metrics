@@ -107,8 +107,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	tickets, err := url.QueryUnescape(ticketsParam)
 	if err != nil {
-		// Maneja el error si la decodificación falla
-		http.Error(w, "Error when docoding tickets param'", http.StatusBadRequest)
+		http.Error(w, "Error when decoding tickets param'", http.StatusBadRequest)
 		return
 	}
 
@@ -152,6 +151,7 @@ func getClickUpData(result *DashboardData, tickets string) {
 
 	token := os.Getenv("CLICKUP_TOKEN")
 	if token == "" {
+		log.Println("Clickup token has not been configured")
 		result.IsClickupTokenExpired = true
 	}
 	ctx := context.WithValue(context.TODO(), ContextClickUpToken, "Bearer "+token)
@@ -177,7 +177,7 @@ func getClickUpData(result *DashboardData, tickets string) {
 			if err.Error() == "api key is expired or is not valid" || err.Error() == "token is expired" {
 				result.IsClickupTokenExpired = true
 			}
-			log.Println(err)
+			log.Println("Clickup token has not been set or has expired")
 			continue
 		}
 		result.AvgLeadTime = result.AvgLeadTime + ticketMetrics.LeadTime
@@ -234,6 +234,10 @@ func getGitLabData(result *DashboardData, startDate string, endDate string, pref
 		return
 	}
 	gitlabToken := os.Getenv("GITLAB_TOKEN")
+	if gitlabToken == "" {
+		log.Fatalln("GitLab token has not been set")
+		return
+	}
 	mrsCli := mergerequests.NewGitlabClient("5908940", prefix, gitlabToken)
 	mrsSlice, _ := mrsCli.GetMergeRequestsMergedBetween(startDate, endDate)
 
