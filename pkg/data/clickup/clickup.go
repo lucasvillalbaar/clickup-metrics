@@ -26,6 +26,14 @@ const (
 	StatusComplete        = "completado"
 )
 
+// Constants for task statuses (Data Team)
+const (
+	DataStatusToReview   = "to review"   // p90020097624_8pLbE48t
+	DataStatusInProgress = "in progress" // p90020097624_GXrdPBxq
+	DataStatusBlocked    = "blocked"     // p90020097624_YSfel0YN
+	DataStatusClosed     = "Closed"      // p90020097624_itsGDThw
+)
+
 const (
 	EndpointTaskHistory = "https://prod-us-east-2-2.clickup.com/tasks/v1/task/%s/history?reverse=true&hist_fields%%5B%%5D=status"
 	EndpointTaskInfo    = "https://api.clickup.com/api/v2/task/%s"
@@ -241,7 +249,32 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		InProgress: false,
 		Blocked:    false,
 		Done:       true,
-	})
+	}, data.Status{
+		Name:       DataStatusToReview,
+		Pending:    true,
+		InProgress: false,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
+		Name:       DataStatusInProgress,
+		Pending:    false,
+		InProgress: true,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
+		Name:       DataStatusBlocked,
+		Pending:    false,
+		InProgress: false,
+		Blocked:    true,
+		Done:       false,
+	}, data.Status{
+		Name:       DataStatusClosed,
+		Pending:    false,
+		InProgress: false,
+		Blocked:    false,
+		Done:       true,
+	},
+	)
 
 	return &data.Workflow{
 		Statuses: statuses,

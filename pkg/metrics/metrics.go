@@ -166,6 +166,14 @@ func CalculateMetrics() []MetricsPerTask {
 				metrics.Metrics.BlockedTime += entry.TimeSpent
 			}
 		}
+
+		if metrics.Metrics.LeadTime == 0 {
+			metrics.Metrics.LeadTime = 1
+		}
+
+		if metrics.Metrics.CycleTime == 0 {
+			metrics.Metrics.CycleTime = 1
+		}
 		// Calculate Flow Efficiency
 		metrics.Metrics.FlowEfficiency = (float64(metrics.Metrics.CycleTime) - float64(metrics.Metrics.BlockedTime)) * 100 / float64(metrics.Metrics.CycleTime)
 		metricsPerTask = append(metricsPerTask, metrics)
