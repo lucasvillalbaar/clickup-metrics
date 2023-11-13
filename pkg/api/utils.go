@@ -62,9 +62,14 @@ func createWorkflow(d data.Data) metrics.Workflow {
 	setStatusesForLeadTimeCalculation(&wf.Statuses)
 	setStatusesForCycleTimeCalculation(&wf.Statuses,
 		clickup.StatusInDevelopment,
+		clickup.StatusInValidation,
 		clickup.StatusReadyToDeploy,
 		clickup.StatusDeployed,
-		clickup.StatusComplete)
+		clickup.StatusCanceled,
+		clickup.StatusCompleted,
+		clickup.StatusCompletado,
+		clickup.DataStatusInProgress,
+		clickup.DataStatusClosed)
 
 	return wf
 }

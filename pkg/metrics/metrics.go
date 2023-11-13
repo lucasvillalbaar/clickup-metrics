@@ -82,6 +82,7 @@ func calculateTimePerState(taskInfo TaskInfo) *MetricsPerState {
 	if len(taskInfo.History) == 0 {
 		return &metrics
 	}
+
 	metrics[taskInfo.History[0].Before].StartDate = taskInfo.StartDate
 	for _, entry := range taskInfo.History {
 		if entry.Date < taskInfo.StartDate {
@@ -99,8 +100,13 @@ func calculateTimePerState(taskInfo TaskInfo) *MetricsPerState {
 		metricForBeforeStatus.DueDate = entry.Date
 		metrics[statusBefore] = metricForBeforeStatus
 
-		metricForBeforeStatus.TimeSpent += calcTimeSpent(metricForBeforeStatus)
-		cleanDates(metricForBeforeStatus)
+		if wf.Statuses[statusBefore].Done && wf.Statuses[statusAfter].Done {
+
+		} else {
+			metricForBeforeStatus.TimeSpent += calcTimeSpent(metricForBeforeStatus)
+			cleanDates(metricForBeforeStatus)
+		}
+
 	}
 
 	return &metrics

@@ -14,16 +14,23 @@ import (
 // Constants for task statuses
 const (
 	StatusToDo            = "to do"
+	StatusBacklog         = "backlog"
 	StatusInDefinitionPM  = "in definition pm"
+	StatusRefining        = "refining"
+	StatusReadyForDev     = "ready for dev"
 	StatusInDesign        = "in design"
 	StatusInDefinitionDev = "in definition dev"
 	StatusToDevelop       = "to develop"
 	StatusInDevelopment   = "in development"
 	StatusInTesting       = "in testing"
+	StatusInValidation    = "in validation"
 	StatusBlocked         = "blocked"
 	StatusReadyToDeploy   = "ready to deploy"
 	StatusDeployed        = "deployed"
-	StatusComplete        = "completado"
+	StatusCanceled        = "canceled"
+	StatusCompletado      = "completado"
+	StatusCompleted       = "completed"
+	StatusReleased        = "released"
 )
 
 // Constants for task statuses (Data Team)
@@ -190,6 +197,18 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Blocked:    false,
 		Done:       false,
 	}, data.Status{
+		Name:       StatusBacklog,
+		Pending:    true,
+		InProgress: false,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
+		Name:       StatusRefining,
+		Pending:    false,
+		InProgress: true,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
 		Name:       StatusInDefinitionPM,
 		Pending:    false,
 		InProgress: true,
@@ -199,6 +218,12 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Name:       StatusInDesign,
 		Pending:    false,
 		InProgress: true,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
+		Name:       StatusReadyForDev,
+		Pending:    true,
+		InProgress: false,
 		Blocked:    false,
 		Done:       false,
 	}, data.Status{
@@ -226,6 +251,12 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Blocked:    false,
 		Done:       false,
 	}, data.Status{
+		Name:       StatusInValidation,
+		Pending:    false,
+		InProgress: true,
+		Blocked:    false,
+		Done:       false,
+	}, data.Status{
 		Name:       StatusBlocked,
 		Pending:    false,
 		InProgress: false,
@@ -244,7 +275,25 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Blocked:    false,
 		Done:       true,
 	}, data.Status{
-		Name:       StatusComplete,
+		Name:       StatusReleased,
+		Pending:    false,
+		InProgress: false,
+		Blocked:    false,
+		Done:       true,
+	}, data.Status{
+		Name:       StatusCanceled,
+		Pending:    false,
+		InProgress: false,
+		Blocked:    false,
+		Done:       true,
+	}, data.Status{
+		Name:       StatusCompletado,
+		Pending:    false,
+		InProgress: false,
+		Blocked:    false,
+		Done:       true,
+	}, data.Status{
+		Name:       StatusCompleted,
 		Pending:    false,
 		InProgress: false,
 		Blocked:    false,
