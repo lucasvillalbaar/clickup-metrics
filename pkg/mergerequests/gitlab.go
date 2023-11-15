@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -51,35 +52,53 @@ func NewGitlabClient(groupID, team, token string) *GitlabClient {
 }
 
 func (c *GitlabClient) GetMergeRequestsMergedBetween(startDate string, endDate string) ([]MergeRequest, error) {
-	url := fmt.Sprintf(GitlabURLGetMergeRequests, c.GroupID, startDate, endDate, c.Team)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("PRIVATE-TOKEN", c.Token)
+	var allMergeRequests []MergeRequest
+	page := 1
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	log.Printf("Fetching data from GitLab from date %s to %s", startDate, endDate)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	for {
+		url := fmt.Sprintf(GitlabURLGetMergeRequests, c.GroupID, startDate, endDate, c.Team)
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("PRIVATE-TOKEN", c.Token)
 
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, errors.New("Resource not found")
-	}
+		query := req.URL.Query()
+		query.Add("page", strconv.Itoa(page))
+		req.URL.RawQuery = query.Encode()
 
-	var mergeRequests []MergeRequest
-	if err := json.NewDecoder(resp.Body).Decode(&mergeRequests); err != nil {
-		log.Println(err)
-		return nil, err
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		log.Printf("Fetching data from GitLab from date %s to %s (page %d)", startDate, endDate, page)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusNotFound {
+			return nil, errors.New("resource not found")
+		}
+
+		var mergeRequests []MergeRequest
+		if err := json.NewDecoder(resp.Body).Decode(&mergeRequests); err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		allMergeRequests = append(allMergeRequests, mergeRequests...)
+
+		if len(mergeRequests) == 0 {
+			// No more merge requests, exit the loop
+			break
+		}
+
+		page++
 	}
 
 	var result []MergeRequest
 	var wg sync.WaitGroup
 
-	for _, mr := range mergeRequests {
+	for _, mr := range allMergeRequests {
 		mrCopy := mr
 		wg.Add(1)
 		go func(mr MergeRequest) {
