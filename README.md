@@ -14,11 +14,9 @@ The microservice exposes the following endpoint:
 To retrieve metrics for a task with ID `12345`, make a `GET` request to:
 `http://localhost:8080/metrics/12345`
 
-Make sure to include the required authorization token in the request header. Use the Authorization header with the value `Bearer {your_token}`. Replace `{your_token}` with your actual authorization token.
-
 Here is an example using cURL:
 
-`curl -H "Authorization: Bearer {your_token}" http://localhost:8080/metrics/12345`
+`curl http://localhost:8080/metrics/12345`
 
 This endpoint retrieves Kanban metrics for a task specified by `{task_id}` in ClickUp.
 
