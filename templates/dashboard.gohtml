@@ -21,15 +21,9 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="textArea">Tickets a analizar</label>
-                        <textarea class="form-control" id="textArea" name="textArea" rows="2"
+                        <textarea class="form-control" id="textArea" name="textArea" rows="4"
                             placeholder="#85aaaaaa, #85bbbbbb, #85cccccc...">{{.Tickets}}</textarea>
                     </div>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn custom-btn-secondary mt-4" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop">
-                        Configurar Token Clickup
-                    </button>
-
                     <!-- Modal -->
                     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
                         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -122,9 +116,7 @@
         </ul>
         <hr>
         <div id="ticketsContent" class="pt-4">
-            {{if .IsClickupTokenExpired}}
-            {{template "no_data" "Token de Clickup expirado o no configurado" }}
-            {{else if eq (len .TaskMetrics) 0}}
+            {{if eq (len .TaskMetrics) 0}}
             {{template "no_data" "No hay datos para los tickets ingresados" }}
             {{else}}
             <div class="charts-block">

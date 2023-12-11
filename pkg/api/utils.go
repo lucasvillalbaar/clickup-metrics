@@ -63,30 +63,11 @@ func createWorkflow(d data.Data) metrics.Workflow {
 	setStatusesForCycleTimeCalculation(&wf.Statuses,
 		clickup.StatusInDevelopment,
 		clickup.StatusInValidation,
+		clickup.StatusInTesting,
 		clickup.StatusReadyToDeploy,
-		clickup.StatusDeployed,
-		clickup.StatusCanceled,
-		clickup.StatusCompleted,
-		clickup.StatusCompletado,
-		clickup.DataStatusInProgress,
-		clickup.DataStatusClosed)
+		clickup.DataStatusInProgress)
 
 	return wf
-}
-
-// prepareHistory prepares the history transitions for a task.
-func prepareHistory(taskInfo data.TaskInfo) []metrics.Transition {
-	history := []metrics.Transition{}
-
-	for _, transition := range taskInfo.History {
-		history = append(history, metrics.Transition{
-			Before: transition.Before.Status,
-			After:  transition.After.Status,
-			Date:   transition.Date,
-		})
-	}
-
-	return history
 }
 
 // ConvertUnixMillisToString converts a Unix timestamp in milliseconds (string format) to a formatted date string.

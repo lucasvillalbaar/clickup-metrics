@@ -1,10 +1,8 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -31,7 +29,6 @@ type DashboardData struct {
 	AvgCycleTime            int
 	AvgBlockedTime          int
 	AvgFlowEfficiency       float64
-	IsClickupTokenExpired   bool
 	TaskMetrics             []TaskMetricsResponse
 	LeadTimeData            ChartData
 	CycleTimeData           ChartData
@@ -64,13 +61,9 @@ func getTaskMetricsHandler(w http.ResponseWriter, r *http.Request) {
 	taskID := vars["task_id"]
 
 	// Retrieve the task metrics for the specified task ID
-	taskMetrics, err := getTaskMetrics(r.Context(), taskID)
+	taskMetrics, err := getTaskMetrics(taskID)
 	if err != nil {
 		switch err.Error() {
-		case "token is expired":
-			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprint(w, `{"error": "Clickup Token expired. Get a new one and do the request again"}`)
-			return
 		case "api key is expired or is not valid":
 			w.WriteHeader(http.StatusUnauthorized)
 			fmt.Fprint(w, `{"error": "Api Key is expired or is not valid. Get a new one and do the request again"}`)
@@ -133,7 +126,7 @@ func getDashboardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := getDashboardData(startDateParam, endDateParam, prefixParam, tickets)
+	data, _ := getDashboardData(startDateParam, endDateParam, prefixParam, tickets)
 
 	// Rellenar la plantilla con los datos y escribir la respuesta HTTP
 	err = tmpl.Execute(w, data)
@@ -149,13 +142,6 @@ func getClickUpData(result *DashboardData, tickets string) {
 		return
 	}
 
-	token := os.Getenv("CLICKUP_TOKEN")
-	if token == "" {
-		log.Println("Clickup token has not been configured")
-		result.IsClickupTokenExpired = true
-	}
-	ctx := context.WithValue(context.TODO(), ContextClickUpToken, "Bearer "+token)
-
 	ticketsSlice := strings.Split(tickets, ",")
 	leadTimeDataSlice := []int{}
 	leadTimeLabelsSlice := []string{}
@@ -167,17 +153,12 @@ func getClickUpData(result *DashboardData, tickets string) {
 	flowEfficiencyLabalsSlice := []string{}
 
 	for _, ticketId := range ticketsSlice {
-		if result.IsClickupTokenExpired == true {
-			continue
-		}
+
 		ticketIdStr := strings.ReplaceAll(ticketId, "#", "")
 		ticketIdStr = strings.ReplaceAll(ticketIdStr, " ", "")
-		ticketMetrics, err := getTaskMetrics(ctx, ticketIdStr)
+		ticketMetrics, err := getTaskMetrics(ticketIdStr)
 		if err != nil {
-			if err.Error() == "api key is expired or is not valid" || err.Error() == "token is expired" {
-				result.IsClickupTokenExpired = true
-			}
-			log.Println("Clickup token has not been set or has expired")
+			log.Println(err)
 			continue
 		}
 		result.AvgLeadTime = result.AvgLeadTime + ticketMetrics.LeadTime
@@ -253,11 +234,10 @@ func getGitLabData(result *DashboardData, startDate string, endDate string, pref
 
 func getDashboardData(startDate string, endDate string, prefix string, tickets string) (*DashboardData, error) {
 	result := &DashboardData{
-		StartDate:             startDate,
-		EndDate:               endDate,
-		Tickets:               tickets,
-		Prefix:                prefix,
-		IsClickupTokenExpired: false,
+		StartDate: startDate,
+		EndDate:   endDate,
+		Tickets:   tickets,
+		Prefix:    prefix,
 	}
 
 	getClickUpData(result, tickets)
@@ -334,39 +314,4 @@ type TokenRequestBody struct {
 
 type TokenResponse struct {
 	Message string `json:"message"`
-}
-
-func setTokenHandler(w http.ResponseWriter, r *http.Request) {
-	// Read the request body
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Error reading the request body", http.StatusBadRequest)
-		return
-	}
-
-	// Decode the JSON body into a TokenRequestBody struct
-	var requestBody TokenRequestBody
-	if err := json.Unmarshal(body, &requestBody); err != nil {
-		http.Error(w, "Error decoding the JSON body", http.StatusBadRequest)
-		return
-	}
-
-	// Get the token from the struct
-	tokenValue := requestBody.Token
-
-	// Set the token as an environment variable
-	os.Setenv("CLICKUP_TOKEN", tokenValue)
-
-	// Respond with a JSON success message
-	responseMessage := TokenResponse{Message: "Token saved successfully"}
-	responseJSON, err := json.Marshal(responseMessage)
-	if err != nil {
-		http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
-		return
-	}
-
-	// Respond with a success message
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(responseJSON)
 }

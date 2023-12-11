@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	EndpointTaskHistory = "https://prod-us-east-2-2.clickup.com/tasks/v1/task/%s/history?reverse=true&hist_fields%%5B%%5D=status"
+	EndpointTaskHistory = "https://api.clickup.com/api/v2/task/%s/time_in_status"
 	EndpointTaskInfo    = "https://api.clickup.com/api/v2/task/%s"
 )
 
@@ -55,7 +55,7 @@ type ResponseGetTask struct {
 }
 
 // getTaskHistory retrieves the task history from the ClickUp API
-func getTaskHistory(taskId string) ([]byte, error) {
+func getTaskHistory(taskId string) ([]data.History, error) {
 	url := fmt.Sprintf(EndpointTaskHistory, taskId)
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -63,7 +63,7 @@ func getTaskHistory(taskId string) ([]byte, error) {
 		return nil, fmt.Errorf("error creating HTTP request: %v", err)
 	}
 
-	req.Header.Set("Authorization", s.token)
+	req.Header.Set("Authorization", s.apiKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -83,7 +83,24 @@ func getTaskHistory(taskId string) ([]byte, error) {
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
 
-	return body, nil
+	timeInStatus := data.TimeInStatusResponse{}
+
+	err = json.Unmarshal(body, &timeInStatus)
+	if err != nil {
+		return nil, err
+	}
+
+	history := []data.History{}
+
+	for _, status := range timeInStatus.StatusHistory {
+		history = append(history, data.History{
+			Status: status.Status,
+			Time:   status.TotalTime.ByMinute,
+			Since:  status.TotalTime.Since,
+		})
+	}
+
+	return history, nil
 }
 
 // getTaskHeaderData retrieves the task header data from the ClickUp API
@@ -130,19 +147,9 @@ func getTaskHeaderData(taskId string) (data.TaskHeaderData, error) {
 	}, nil
 }
 
-// parserJSON parses the JSON input into a slice of Transition
-func parserJSON(inputData []byte) []data.Transition {
-	var taskInfo data.TaskInfo
-	err := json.Unmarshal(inputData, &taskInfo)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return taskInfo.History
-}
-
 // getTaskInfo retrieves the task information including history and header data
 func getTaskInfo(taskId string) (*data.TaskInfo, error) {
-	historyData, err := getTaskHistory(taskId)
+	history, err := getTaskHistory(taskId)
 	if err != nil {
 		return &data.TaskInfo{}, err
 	}
@@ -152,8 +159,6 @@ func getTaskInfo(taskId string) (*data.TaskInfo, error) {
 		return &data.TaskInfo{}, err
 	}
 
-	history := parserJSON([]byte(historyData))
-
 	return &data.TaskInfo{
 		TaskHeaderData: taskHeaderData,
 		History:        history,
@@ -162,15 +167,13 @@ func getTaskInfo(taskId string) (*data.TaskInfo, error) {
 
 type Session struct {
 	apiKey string
-	token  string
 }
 
 var s *Session
 
-func Init(apiKey string, token string) *Session {
+func Init(apiKey string) *Session {
 	s = &Session{
 		apiKey: apiKey,
-		token:  token,
 	}
 
 	return s
@@ -198,7 +201,7 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Done:       false,
 	}, data.Status{
 		Name:       StatusBacklog,
-		Pending:    true,
+		Pending:    false,
 		InProgress: false,
 		Blocked:    false,
 		Done:       false,
@@ -300,7 +303,7 @@ func (s *Session) GetWorkflow() *data.Workflow {
 		Done:       true,
 	}, data.Status{
 		Name:       DataStatusToReview,
-		Pending:    true,
+		Pending:    false,
 		InProgress: false,
 		Blocked:    false,
 		Done:       false,

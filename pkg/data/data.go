@@ -2,15 +2,24 @@ package data
 
 import "time"
 
-type TransitionState struct {
+type History struct {
 	Status string
+	Time   int
+	Since  string
 }
 
-// Structures to parse JSON
-type Transition struct {
-	Before TransitionState
-	After  TransitionState
-	Date   string
+type TotalTime struct {
+	ByMinute int    `json:"by_minute"`
+	Since    string `json:"since"`
+}
+
+type StatusHistory struct {
+	Status    string    `json:"status"`
+	TotalTime TotalTime `json:"total_time"`
+}
+
+type TimeInStatusResponse struct {
+	StatusHistory []StatusHistory `json:"status_history"`
 }
 
 type TaskHeaderData struct {
@@ -23,7 +32,7 @@ type TaskHeaderData struct {
 
 type TaskInfo struct {
 	TaskHeaderData
-	History []Transition
+	History []History
 }
 
 type Filter struct {

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -18,16 +17,16 @@ type TimeSpentPerStateResponse struct {
 	TimeSpent int    `json:"time_spent"`
 }
 type TaskMetricsResponse struct {
-	Id             string                      `json:"id"`
-	CustomId       string                      `json:"custom_id"`
-	Name           string                      `json:"name"`
-	StartDate      string                      `json:"start_date"`
-	DueDate        string                      `json:"due_date"`
-	LeadTime       int                         `json:"lead_time"`
-	CycleTime      int                         `json:"cycle_time"`
-	BlockedTime    int                         `json:"blocked_time"`
-	FlowEfficiency float64                     `json:"flow_efficiency"`
-	Statuses       []TimeSpentPerStateResponse `json:"statuses"`
+	Id             string         `json:"id"`
+	CustomId       string         `json:"custom_id"`
+	Name           string         `json:"name"`
+	StartDate      string         `json:"start_date"`
+	DueDate        string         `json:"due_date"`
+	LeadTime       int            `json:"lead_time"`
+	CycleTime      int            `json:"cycle_time"`
+	BlockedTime    int            `json:"blocked_time"`
+	FlowEfficiency float64        `json:"flow_efficiency"`
+	Statuses       []data.History `json:"statuses"`
 }
 
 const (
@@ -37,16 +36,13 @@ const (
 var wf metrics.Workflow
 
 // initialization loads environment variables, initializes the data source, and creates the workflow
-func configureDataSource(ctx context.Context) {
+func configureDataSource() {
 	err := configuration.LoadEnvironmentVariables()
 	if err != nil {
 		log.Fatal("Error loading .env file:", err)
 	}
-	token := ctx.Value(ContextClickUpToken).(string)
-	if token == "" {
-		log.Println("Clickup token has not been configured")
-	}
-	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey, token)
+
+	cli := clickup.Init(configuration.GetEnvironmentVariables().ApiKey)
 
 	data.SetDataSource(cli)
 
@@ -60,7 +56,6 @@ func Init() *mux.Router {
 	router.Use(authInterceptor)
 	router.HandleFunc("/healthcheck", getHealthCheck).Methods("GET")
 	router.HandleFunc("/dashboard", getDashboardHandler).Methods("GET")
-	router.HandleFunc("/token", setTokenHandler).Methods("POST")
 
 	router.HandleFunc("/metrics/{task_id}", getTaskMetricsHandler).Methods("GET")
 
@@ -88,25 +83,20 @@ func getHealthCheck(w http.ResponseWriter, r *http.Request) {
 // authInterceptor es el interceptor que se ejecutará antes de manejar la solicitud
 func authInterceptor(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-
-		ctx := context.WithValue(r.Context(), ContextClickUpToken, token)
-
-		r = r.WithContext(ctx)
+		// TODO: add api key
 
 		next.ServeHTTP(w, r)
 	})
 }
 
 // getTaskMetrics retrieves the metrics for a specific task
-func getTaskMetrics(ctx context.Context, taskID string) (TaskMetricsResponse, error) {
-	configureDataSource(ctx)
+func getTaskMetrics(taskID string) (TaskMetricsResponse, error) {
+	configureDataSource()
 	taskInfo, err := data.GetTaskByID(taskID)
 	if err != nil {
+		log.Println(err)
 		return TaskMetricsResponse{}, err
 	}
-
-	history := prepareHistory(*taskInfo)
 
 	tasks := []metrics.TaskInfo{}
 	tasks = append(tasks, metrics.TaskInfo{
@@ -114,7 +104,7 @@ func getTaskMetrics(ctx context.Context, taskID string) (TaskMetricsResponse, er
 		Name:      taskInfo.Name,
 		StartDate: taskInfo.StartDate,
 		DueDate:   taskInfo.DueDate,
-		History:   history,
+		History:   taskInfo.History,
 	})
 
 	metrics.InitMetrics(wf)
@@ -125,7 +115,6 @@ func getTaskMetrics(ctx context.Context, taskID string) (TaskMetricsResponse, er
 		result := metricsPerTask[0]
 		startDate, _ := ConvertUnixMillisToString(result.TaskInfo.StartDate)
 		dueDate, _ := ConvertUnixMillisToString(result.TaskInfo.DueDate)
-		statuses := getTimeSpentPerState(&result.MetricsPerState)
 		return TaskMetricsResponse{
 			Id:             result.TaskInfo.Id,
 			CustomId:       taskInfo.CustomId,
@@ -136,34 +125,9 @@ func getTaskMetrics(ctx context.Context, taskID string) (TaskMetricsResponse, er
 			CycleTime:      result.Metrics.CycleTime,
 			BlockedTime:    result.Metrics.BlockedTime,
 			FlowEfficiency: result.Metrics.FlowEfficiency,
-			Statuses:       statuses,
+			Statuses:       result.TaskInfo.History,
 		}, nil
 	}
 
 	return TaskMetricsResponse{}, nil
-}
-
-// getTimeSpentPerState calculates the time spent per state and returns a slice of TimeSpentPerStateResponse.
-// It takes a pointer to a MetricsPerState map as input.
-// Each entry in the map represents a state and its corresponding time spent.
-// The function iterates through the map, extracts the state name and time spent,
-// and creates TimeSpentPerStateResponse objects, which are then appended to a result slice.
-// Finally, the function returns the result slice containing the calculated data.
-//
-// Parameters:
-//   - ms (*metrics.MetricsPerState): A pointer to a MetricsPerState map.
-//
-// Returns:
-//
-//	([]TimeSpentPerStateResponse): A slice of TimeSpentPerStateResponse objects
-//	                               representing the time spent per state.
-func getTimeSpentPerState(ms *metrics.MetricsPerState) []TimeSpentPerStateResponse {
-	result := []TimeSpentPerStateResponse{}
-	for key, entry := range *ms {
-		result = append(result, TimeSpentPerStateResponse{
-			Name:      key,
-			TimeSpent: entry.TimeSpent,
-		})
-	}
-	return result
 }
