@@ -179,7 +179,7 @@ func getClickUpData(result *DashboardData, tickets string) {
 	result.AvgLeadTime = result.AvgLeadTime / len(ticketsSlice)
 	result.AvgCycleTime = result.AvgCycleTime / len(ticketsSlice)
 	result.AvgBlockedTime = result.AvgBlockedTime / len(ticketsSlice)
-	result.AvgFlowEfficiency = result.AvgFlowEfficiency / float64(len(ticketsSlice))
+	result.AvgFlowEfficiency = (float64(result.AvgCycleTime) - float64(result.AvgBlockedTime)) * 100 / float64(result.AvgCycleTime)
 
 	result.LeadTimeData = ChartData{
 		ChartID:    "lead-time-chart",
